@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Wedding {
+  id             String       @id @default(cuid())
+  groomName      String
+  brideName      String
+  dateOfWedding  DateTime
+  workingShiftId String
+  workingShift   WorkingShift @relation(fields: [workingShiftId], references: [id])
+  hallId         String
+  hall           Hall         @relation(fields: [hallId], references: [id])
+  deposit        Int
+  totalPrice Int?
+  numOfTables    Int
+  phoneNumber    String?
+  createdAt      DateTime     @default(now()) @map(name: "created_at")
+  updatedAt      DateTime     @updatedAt @map(name: "updated_at")
+
+  dishes   DishForWedding[]
+  services ServiceForWedding[]
+  Receipt  Receipt[]
+  Contract Contract[]
+}
+
+model Hall {
+  id              String    @id @default(cuid())
+  name            String
+  type            Int
+  maxTables      Int @default(0)
+  pricePerTable Int @default(0)
+  note            String?
+  isAvailable     Boolean @default(true)
+  createdAt       DateTime  @default(now()) @map(name: "created_at")
+  updatedAt       DateTime  @updatedAt @map(name: "updated_at")
+  Wedding         Wedding[]
+}
+
+model Dish {
+  id             String           @id @default(cuid())
+  name           String
+  price          Int
+  note           String?
+  isAvailable    Boolean  @default(true)
+  createdAt      DateTime         @default(now()) @map(name: "created_at")
+  updatedAt      DateTime         @updatedAt @map(name: "updated_at")
+  DishForWedding DishForWedding[]
+}
+
+model Service {
+  id                String              @id @default(cuid())
+  name              String
+  price             Int
+  note              String?
+  isAvailable       Boolean @default(true)
+  createdAt         DateTime            @default(now()) @map(name: "created_at")
+  updatedAt         DateTime            @updatedAt @map(name: "updated_at")
+  ServiceForWedding ServiceForWedding[]
+}
+
+model DishForWedding {
+  id        String   @id @default(cuid())
+  dishId    String
+  dish      Dish     @relation(fields: [dishId], references: [id])
+  weddingId String
+  wedding   Wedding  @relation(fields: [weddingId], references: [id])
+  servingOrder Int @default(1)
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+}
+
+model ServiceForWedding {
+  id        String   @id @default(cuid())
+  serviceId String
+  service      Service  @relation(fields: [serviceId], references: [id])
+  weddingId String
+  wedding   Wedding  @relation(fields: [weddingId], references: [id])
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+}
+
+model Receipt {
+  id          String   @id @default(cuid())
+  weddingId   String
+  wedding     Wedding  @relation(fields: [weddingId], references: [id])
+  name        String
+  isDeposit   Boolean @default(false)
+  price       Int
+  isPaid      Boolean @default(false)
+  isCancelled Boolean @default(false)
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @updatedAt @map(name: "updated_at")
+}
+
+model Contract {
+  id          String   @id @default(cuid())
+  weddingId   String
+  wedding     Wedding  @relation(fields: [weddingId], references: [id])
+  description String
+  isSigned    Boolean @default(false)
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @updatedAt @map(name: "updated_at")
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  startDate    DateTime
+  endDate      DateTime
+  noOfWeddings Int
+  Revenue      Int
+  Ratio        Float
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @updatedAt @map(name: "updated_at")
+}
+
+model WorkingShift {
+  id               String            @id @default(cuid())
+  weekday          Int
+  startHour        Int
+  endHour          Int
+  createdAt        DateTime          @default(now()) @map(name: "created_at")
+  updatedAt        DateTime          @updatedAt @map(name: "updated_at")
+  weddings         Wedding[]
+  workingSchedules WorkingSchedule[]
+}
+
+model WorkingSchedule {
+  id             String       @id @default(cuid())
+  employeeId     String
+  employee       User         @relation(fields: [employeeId], references: [id])
+  workingShiftId String
+  workingShift   WorkingShift @relation(fields: [workingShiftId], references: [id])
+  createdAt      DateTime     @default(now()) @map(name: "created_at")
+  updatedAt      DateTime     @updatedAt @map(name: "updated_at")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map(name: "sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  phoneNumber   String?
+  image         String?
+  roleId        Int?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+
+  accounts         Account[]
+  sessions         Session[]
+  workingSchedules WorkingSchedule[]
+
+  @@map(name: "users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map(name: "verification_tokens")
+}
