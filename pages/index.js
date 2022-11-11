@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/20/solid'
 import Router from 'next/router';
 import Layout from '../components/Layout';
+import ListPage from '../components/ListPage';
 import prisma from '../lib/prisma'
 
 const projects = [
@@ -89,6 +90,91 @@ export default function Home(props) {
     })
   });
 
+  // // Uncomment this button to set up DB
+  // const setupDB = async () => {
+  //   await fetch('/api/setup_db', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //   });
+  // };
+
+//   const smallPageComponents = weddings.map(wedding => (
+//     <a href={`/weddings/${wedding.id}`} className="block bg-white px-4 py-4 hover:bg-gray-50">
+//       <span className="flex items-center space-x-4">
+//         <span className="flex flex-1 space-x-2 truncate">
+//           <span className="flex flex-col truncate text-sm text-gray-500">
+//             <span className="truncate text-sm font-medium leading-6">
+//               <span className="truncate font-normal text-gray-500">Chú rể </span>
+//               {wedding.groomName}
+//             </span>
+//             <span className="truncate text-sm font-medium leading-6">
+//               <span className="truncate font-normal text-gray-500">Cô dâu </span>
+//               {wedding.brideName}
+//             </span>
+//             <time dateTime={wedding.dateOfWedding}>{wedding.dateOfWedding}</time>
+//           </span>
+//         </span>
+//         <ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+//       </span>
+//     </a>  
+//   ));
+// 
+//   const columns = ["Tiệc cưới", "Sảnh", "Thời gian", "Tình trạng", "Ngày cưới"]
+//   const rows = weddings.map(wedding => ([
+//     {
+//       component: (
+//         <div className="flex">
+//           <a href={`/weddings/${wedding.id}`} className="truncate hover:text-gray-600">
+//             <span>
+//               <span className="text-sm font-medium leading-6">
+//               <span className="font-normal text-gray-500">Chú rể </span>
+//               {wedding.groomName}
+//             </span>
+//             <span className="font-normal text-gray-500">&nbsp;&&nbsp;</span>
+//             <span className="text-sm font-medium leading-6">
+//               <span className="font-normal text-gray-500">Cô dâu </span>
+//               {wedding.brideName}
+//             </span>
+//             </span>
+//           </a>
+//         </div>
+//       ),
+//     },
+//     {
+//       text: wedding.hall.name,
+//     },
+//     {
+//       text: `${wedding.workingShift.startHour}h - ${wedding.workingShift.endHour}h`,
+//     },
+//     {
+//       component: (
+//         <span
+//             className={classNames(
+//               statusStyles[statusTexts[wedding.status]],
+//               'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize'
+//             )}
+//           >
+//             {wedding.status}
+//           </span>
+//       ),
+//       text: wedding.status,
+//     },
+//     {
+//       text: wedding.dateOfWedding,
+//     },
+//   ]));
+// 
+//   return (
+//     <ListPage
+//       pageTitle="Trang chủ"
+//       smallPageTableName="Các tiệc cưới"
+//       smallPageComponents={smallPageComponents}
+//       columns={columns}
+//       rows={rows}
+//       createButtonText="Đặt tiệc cưới"
+//     />
+//   )
+
   return (
     <Layout title="Drinkies" description="Selling drinks">
       <main className="flex-1">
@@ -96,6 +182,17 @@ export default function Home(props) {
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">Trang chủ</h1>
           </div>
+          {/* Uncomment this button to set up DB */}
+          {/* <div className="mt-4 flex sm:mt-0 sm:ml-4"> */}
+          {/*   <button */}
+          {/*     type="button" */}
+          {/*     className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3" */}
+          {/*     onClick={async () => await setupDB()} */}
+          {/*   > */}
+          {/*     Setup DB */}
+          {/*   </button> */}
+          {/* </div> */}
+
           <div className="mt-4 flex sm:mt-0 sm:ml-4">
             <button
               type="button"
@@ -194,6 +291,12 @@ export default function Home(props) {
                   >
                     Ngày cưới
                   </th>
+                  <th
+                    className="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
+                    scope="col"
+                  >
+                    Hành động
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -234,6 +337,14 @@ export default function Home(props) {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
                       <time dateTime={wedding.dateOfWedding}>{wedding.dateOfWedding}</time>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
+                      <button
+                        type="button"
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -10,16 +10,7 @@ const postHandler = async (req, res) => {
     deposit,
     numOfTables,
   } = req.body;
-  console.log('meow')
-  console.log({
-      groomName,
-      brideName,
-      dateOfWedding: new Date(dateOfWedding),
-      workingShiftId,
-      hallId,
-      deposit,
-      numOfTables,
-    })
+
   const result = await prisma.wedding.create({
     data: {
       groomName,

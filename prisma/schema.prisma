@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
@@ -49,6 +49,7 @@ model Dish {
   id             String           @id @default(cuid())
   name           String
   price          Int
+  imageUrl  String
   note           String?
   isAvailable    Boolean  @default(true)
   createdAt      DateTime         @default(now()) @map(name: "created_at")
