@@ -20,38 +20,38 @@ model Wedding {
   hallId         String
   hall           Hall         @relation(fields: [hallId], references: [id])
   deposit        Int
-  totalPrice Int?
+  totalPrice     Int?
   numOfTables    Int
   phoneNumber    String?
   createdAt      DateTime     @default(now()) @map(name: "created_at")
   updatedAt      DateTime     @updatedAt @map(name: "updated_at")
 
-  dishes   DishForWedding[]
-  services ServiceForWedding[]
-  Receipt  Receipt[]
-  Contract Contract[]
+  dishes    DishForWedding[]
+  services  ServiceForWedding[]
+  receipts  Receipt[]
+  contracts Contract[]
 }
 
 model Hall {
-  id              String    @id @default(cuid())
-  name            String
-  type            Int
-  maxTables      Int @default(0)
-  pricePerTable Int @default(0)
-  note            String?
-  isAvailable     Boolean @default(true)
-  createdAt       DateTime  @default(now()) @map(name: "created_at")
-  updatedAt       DateTime  @updatedAt @map(name: "updated_at")
-  Wedding         Wedding[]
+  id            String    @id @default(cuid())
+  name          String
+  type          Int
+  maxTables     Int       @default(0)
+  pricePerTable Int       @default(0)
+  note          String?
+  isAvailable   Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  Wedding       Wedding[]
 }
 
 model Dish {
   id             String           @id @default(cuid())
   name           String
   price          Int
-  imageUrl  String
+  imageUrl       String
   note           String?
-  isAvailable    Boolean  @default(true)
+  isAvailable    Boolean          @default(true)
   createdAt      DateTime         @default(now()) @map(name: "created_at")
   updatedAt      DateTime         @updatedAt @map(name: "updated_at")
   DishForWedding DishForWedding[]
@@ -62,27 +62,27 @@ model Service {
   name              String
   price             Int
   note              String?
-  isAvailable       Boolean @default(true)
+  isAvailable       Boolean             @default(true)
   createdAt         DateTime            @default(now()) @map(name: "created_at")
   updatedAt         DateTime            @updatedAt @map(name: "updated_at")
   ServiceForWedding ServiceForWedding[]
 }
 
 model DishForWedding {
-  id        String   @id @default(cuid())
-  dishId    String
-  dish      Dish     @relation(fields: [dishId], references: [id])
-  weddingId String
-  wedding   Wedding  @relation(fields: [weddingId], references: [id])
-  servingOrder Int @default(1)
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  id           String   @id @default(cuid())
+  dishId       String
+  dish         Dish     @relation(fields: [dishId], references: [id])
+  weddingId    String
+  wedding      Wedding  @relation(fields: [weddingId], references: [id])
+  servingOrder Int      @default(1)
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @updatedAt @map(name: "updated_at")
 }
 
 model ServiceForWedding {
   id        String   @id @default(cuid())
   serviceId String
-  service      Service  @relation(fields: [serviceId], references: [id])
+  service   Service  @relation(fields: [serviceId], references: [id])
   weddingId String
   wedding   Wedding  @relation(fields: [weddingId], references: [id])
   createdAt DateTime @default(now()) @map(name: "created_at")
@@ -90,26 +90,41 @@ model ServiceForWedding {
 }
 
 model Receipt {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   weddingId   String
-  wedding     Wedding  @relation(fields: [weddingId], references: [id])
+  wedding     Wedding   @relation(fields: [weddingId], references: [id])
   name        String
-  isDeposit   Boolean @default(false)
+  isDeposit   Boolean   @default(false)
   price       Int
-  isPaid      Boolean @default(false)
-  isCancelled Boolean @default(false)
-  createdAt   DateTime @default(now()) @map(name: "created_at")
-  updatedAt   DateTime @updatedAt @map(name: "updated_at")
+  isPaid      Boolean   @default(false)
+  isCancelled Boolean   @default(false)
+  paidAt      DateTime?
+  cancelledAt DateTime?
+  createdAt   DateTime  @default(now()) @map(name: "created_at")
+  updatedAt   DateTime  @updatedAt @map(name: "updated_at")
+  payment     Payment?
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  receiptId  String   @unique
+  receipt    Receipt  @relation(fields: [receiptId], references: [id])
+  payerName  String
+  cardNumber String
+  cardExpiry String
+  cardCvc        String
+  createdAt  DateTime @default(now()) @map(name: "created_at")
 }
 
 model Contract {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   weddingId   String
-  wedding     Wedding  @relation(fields: [weddingId], references: [id])
+  wedding     Wedding   @relation(fields: [weddingId], references: [id])
   description String
-  isSigned    Boolean @default(false)
-  createdAt   DateTime @default(now()) @map(name: "created_at")
-  updatedAt   DateTime @updatedAt @map(name: "updated_at")
+  isSigned    Boolean   @default(false)
+  signedAt    DateTime?
+  createdAt   DateTime  @default(now()) @map(name: "created_at")
+  updatedAt   DateTime  @updatedAt @map(name: "updated_at")
 }
 
 model Report {

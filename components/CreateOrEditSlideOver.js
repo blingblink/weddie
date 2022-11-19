@@ -10,6 +10,7 @@ const DynamicInput = (props) => {
 		inputKey,
 		value,
 		onChange,
+    disabled,
 	} = props;
 	if (type === 'checkbox') return (
 		<div className="relative flex items-start">
@@ -25,7 +26,8 @@ const DynamicInput = (props) => {
           id={`form-field-${inputKey}`}
           defaultChecked={value}
           onChange={event => onChange(inputKey, !value)}
-          className="h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          className="h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
+          disabled={disabled}
         />
       </div>
     </div>
@@ -47,7 +49,8 @@ const DynamicInput = (props) => {
             if (type === 'number') value = parseInt(value, 10);
             onChange(inputKey, value);
           }}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
+          disabled={disabled}
         />
       </div>
 		</div>
@@ -59,6 +62,7 @@ export default function CreateOrEditSlideOver(props) {
 		isCreate,
 		onCreate,
 		onUpdate,
+    onDelete,
     columns,
     rowValue,
     onFieldChange,
@@ -118,6 +122,7 @@ export default function CreateOrEditSlideOver(props) {
                                 inputKey={column.key}
                                 value={rowValue[column.key]}
                                 onChange={onFieldChange}
+                                disabled={column.disabled}
                         			/>
                         		))}
                         	</div>
@@ -131,7 +136,10 @@ export default function CreateOrEditSlideOver(props) {
                       <button
                         type="button"
                         className="rounded-md border border-gray-300 bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                        onClick={() => setOpen(false)}
+                        onClick={async () => {
+                          await onDelete();
+                          setOpen(false);
+                        }}
                       >
                         Xoá
                       </button>

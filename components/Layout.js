@@ -26,15 +26,16 @@ const user = {
   imageUrl:
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
+
 const navigation = [
-  { name: 'Tiệc cưới', href: '#', icon: HomeIcon, current: false },
-  { name: 'Sảnh', href: '#', icon: MapIcon, current: false },
-  { name: 'Dịch vụ', href: '#', icon: TruckIcon, current: false },
-  { name: 'Món ăn', href: '#', icon: ShoppingCartIcon, current: false },
-  { name: 'Các ca làm việc', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Ca trực nhân viên', href: '#', icon: CalendarDaysIcon, current: false },
-  { name: 'Nhân viên', href: '#', icon: UserGroupIcon, current: false },
-  { name: 'Báo cáo', href: '#', icon: DocumentChartBarIcon, current: false },
+  { name: 'Tiệc cưới', href: '/', icon: HomeIcon, current: false },
+  { name: 'Sảnh', href: '/halls', icon: MapIcon, current: false },
+  { name: 'Dịch vụ', href: '/services', icon: TruckIcon, current: false },
+  { name: 'Món ăn', href: '/dishes', icon: ShoppingCartIcon, current: false },
+  { name: 'Các ca làm việc', href: '/working_shifts', icon: CalendarIcon, current: false },
+  { name: 'Ca trực nhân viên', href: '/working_schedules', icon: CalendarDaysIcon, current: false },
+  { name: 'Nhân viên', href: '/employees', icon: UserGroupIcon, current: false },
+  { name: 'Báo cáo', href: '/reports', icon: DocumentChartBarIcon, current: false },
 ]
 
 const secondaryNavigation = [

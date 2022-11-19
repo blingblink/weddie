@@ -17,99 +17,17 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Layout from '../../components/Layout';
 import prisma from '../../lib/prisma';
 
-
-const user = {
-  name: 'Whitney Francis',
-  email: 'whitney@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80',
-}
-const navigation = [
-  { name: 'Dashboard', href: '#' },
-  { name: 'Jobs', href: '#' },
-  { name: 'Applicants', href: '#' },
-  { name: 'Company', href: '#' },
-]
-const breadcrumbs = [
-  { name: 'Jobs', href: '#', current: false },
-  { name: 'Front End Developer', href: '#', current: false },
-  { name: 'Applicants', href: '#', current: true },
-]
-const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
-]
-const attachments = [
-  { name: 'resume_front_end_developer.pdf', href: '#' },
-  { name: 'coverletter_front_end_developer.pdf', href: '#' },
-]
 const eventTypes = {
-  applied: { icon: DocumentPlusIcon, bgColorClass: 'bg-gray-400' },
+  initial: { icon: DocumentPlusIcon, bgColorClass: 'bg-gray-400' },
   pending: { icon: ClockIcon, bgColorClass: 'bg-gray-500' },
   advanced: { icon: HandThumbUpIcon, bgColorClass: 'bg-blue-500' },
   completed: { icon: CheckIcon, bgColorClass: 'bg-green-500' },
 }
-const timeline = [
-  {
-    id: 1,
-    type: eventTypes.applied,
-    content: 'Tiệc cưới được đặt',
-    // target: 'Front End Developer',
-    date: '2022-10-22',
-    datetime: '2022-10-22',
-  },
-  {
-    id: 2,
-    type: eventTypes.completed,
-    content: 'Thu ngân tạo hợp đồng đặt cọc',
-    // target: 'Bethany Blake',
-    date: '2022-10-23',
-    datetime: '2022-10-23',
-  },
-  {
-    id: 3,
-    type: eventTypes.completed,
-    content: 'Khách hàng kí hợp đồng đặt cọc',
-    // target: 'Martha Gardner',
-    date: '2022-10-25',
-    datetime: '2022-10-25',
-  },
-  {
-    id: 4,
-    type: eventTypes.pending,
-    content: 'Chờ thanh toán tiền cọc từ khách hàng',
-    // target: 'Katherine Snyder',
-    date: '2022-10-25',
-    datetime: '2022-10-25',
-  },
-]
-const comments = [
-  {
-    id: 1,
-    name: 'Mì ý cua sốt kem',
-    date: '4d ago',
-    imageId: '1494790108377-be9c29b29330',
-    imageUrl: 'https://cdn.tgdd.vn/Files/2021/06/20/1361779/cach-lam-mi-y-cua-sot-kem-beo-ngay-ngon-chuan-pizza-4ps-202201122031546776.jpeg',
-    body: 'Ducimus quas delectus ad maxime totam doloribus reiciendis ex. Tempore dolorem maiores. Similique voluptatibus tempore non ut.',
-  },
-  {
-    id: 2,
-    name: 'Mì Quảng trộn',
-    date: '4d ago',
-    imageId: '1519244703995-f4e0f30006d5',
-    imageUrl: 'https://static.riviu.co/960/image/2020/10/31/90ea462a91b99d088fe6964441a27dc1_output.jpeg',
-    body: 'Et ut autem. Voluptatem eum dolores sint necessitatibus quos. Quis eum qui dolorem accusantium voluptas voluptatem ipsum. Quo facere iusto quia accusamus veniam id explicabo et aut.',
-  },
-  {
-    id: 3,
-    name: 'Sashimi cá hồi',
-    date: '4d ago',
-    imageId: '1506794778202-cad84cf45f1d',
-    imageUrl: 'https://cookingchew.com/wp-content/uploads/2021/11/What-Is-Sashimi.jpg',
-    body: 'Expedita consequatur sit ea voluptas quo ipsam recusandae. Ab sint et voluptatem repudiandae voluptatem et eveniet. Nihil quas consequatur autem. Perferendis rerum et.',
-  },
-]
+const statusStyles = {
+  success: 'bg-green-100 text-green-800',
+  processing: 'bg-yellow-100 text-yellow-800',
+  cancelled: 'bg-gray-100 text-gray-800',
+}
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -117,7 +35,120 @@ function classNames(...classes) {
 
 export default function WeddingInfoPage(props) {
   const { wedding } = props;
-  const { hall } = wedding;
+  const {
+    hall,
+    workingShift,
+    dishes,
+    services,
+    contracts,
+    receipts,
+  } = wedding;
+
+  const nextActions = {
+    payDeposit: {
+      buttonText: 'Thanh toán tiền cọc',
+      href: `/weddings/${wedding.id}/pay`,
+    },
+    payTotal: {
+      buttonText: 'Thanh toán tổng tiền',
+      href: `/weddings/${wedding.id}/pay`,
+    },
+  }
+
+
+  // Populate the activities in the timeline
+  const actions = [];
+  const initialActivities = [
+    {
+      type: eventTypes.initial,
+      content: 'Tiệc cưới được đặt',
+      // target: 'Front End Developer',
+      date: wedding.createdAt,
+    },
+    // {
+    //   type: eventTypes.completed,
+    //   content: 'Hợp đồng được tạo',
+    //   date: wedding.createdAt,
+    // },
+    {
+      type: eventTypes.completed,
+      content: 'Đơn đặt cọc và tổng tiền được tạo',
+      date: wedding.createdAt,
+    },
+  ];
+  const depositReceipt = receipts.find(receipt => receipt.isDeposit && !receipt.isCancelled);
+  const finalReceipt = receipts.reverse().find(receipt => !receipt.isDeposit);
+
+  const activitiesWithDate = [];
+  const pendingActivities = [];
+
+  if (depositReceipt.isPaid)
+    activitiesWithDate.push({
+      type: eventTypes.completed,
+      content: 'Tiền cọc đã được thanh toán',
+      target: 'Khách hàng',
+      date: depositReceipt.paidAt,
+    });
+  else {
+    pendingActivities.push({
+      type: eventTypes.pending,
+      content: 'Chờ thanh toán tiền cọc từ',
+      target: 'Khách hàng',
+    });
+    actions.push(nextActions.payDeposit);
+  }
+
+  if (finalReceipt.isPaid)
+    activitiesWithDate.push({
+      type: eventTypes.completed,
+      content: 'Tổng tiền đã được thanh toán bởi',
+      target: 'Khách hàng',
+      date: depositReceipt.paidAt,
+    });
+  else {
+    pendingActivities.push({
+      type: eventTypes.pending,
+      content: 'Chờ thanh toán tổng tiền từ',
+      target: 'Khách hàng',
+    });
+    actions.push(nextActions.payTotal);
+  }
+
+  const today = new Date();
+  const weddingDate = new Date(wedding.dateOfWedding);
+  if (today > weddingDate)
+    activitiesWithDate.push({
+      type: eventTypes.pending,
+      content: (
+        <span>
+          Còn <span className="font-medium text-gray-900">
+            {Math.round((today - weddingDate) / (1000 * 60 * 60 * 24))}
+          </span>
+          {' '}ngày đến ngày cưới{' '}
+          <span className="font-medium text-gray-900">
+            {wedding.dateOfWedding}
+          </span>
+        </span>
+      ),
+    });
+  else if (today < weddingDate)
+    activitiesWithDate.push({
+      type: eventTypes.completed,
+      content: 'Tiệc cưới đã hoàn thành',
+      date: wedding.dateOfWedding,
+    });
+  else
+    activitiesWithDate.push({
+      type: eventTypes.completed,
+      content: 'Tiệc cưới diễn ra vào hôm nay',
+      date: wedding.dateOfWedding,
+    });
+
+  activitiesWithDate.sort((act1, act2) => new Date(act1.date) - new Date(act2.date));
+  const timeline = initialActivities.concat(activitiesWithDate, pendingActivities)
+
+  // Decide which action to show next
+  const nextAction = actions.length > 0 ? actions[0] : null;
 
   return (
     <Layout title="Drinkies" description="Selling drinks" className="bg-gray-50">
@@ -150,12 +181,12 @@ export default function WeddingInfoPage(props) {
             >
               Chỉnh sửa
             </button>
-            <button
-              type="button"
+            <a
+              href={nextAction.href}
               className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
             >
-              Thanh toán tiền cọc
-            </button>
+              {nextAction.buttonText}
+            </a>
           </div>
         </div>
 
@@ -185,15 +216,19 @@ export default function WeddingInfoPage(props) {
                       <dd className="mt-1 text-sm text-gray-900">{wedding.deposit} VND</dd>
                     </div>
                     <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">Tổng tiền</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{wedding.totalPrice} VND</dd>
+                    </div>
+                    <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500">Điện thoại</dt>
                       <dd className="mt-1 text-sm text-gray-900">{wedding.phoneNumber || '-'}</dd>
                     </div>
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500">Thời gian</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{`${wedding.workingShift.startHour}h - ${wedding.workingShift.startHour}h`}</dd>
+                      <dd className="mt-1 text-sm text-gray-900">{`${wedding.workingShift.startHour}h - ${wedding.workingShift.endHour}h`}</dd>
                     </div>
                     <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Ngày</dt>
+                      <dt className="text-sm font-medium text-gray-500">Ngày cưới</dt>
                       <dd className="mt-1 text-sm text-gray-900">{wedding.dateOfWedding}</dd>
                     </div>
                   </dl>
@@ -201,6 +236,7 @@ export default function WeddingInfoPage(props) {
               </div>
             </section>
 
+            {/* Hall */}
             <section aria-labelledby="hall-title">
               <div className="bg-white shadow sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6">
@@ -236,7 +272,7 @@ export default function WeddingInfoPage(props) {
               </div>
             </section>
 
-            {/* Hall */}
+            {/* Dishes */}
             <section aria-labelledby="food-title">
               <div className="bg-white shadow sm:overflow-hidden sm:rounded-lg">
                 <div className="divide-y divide-gray-200">
@@ -248,24 +284,61 @@ export default function WeddingInfoPage(props) {
                   </div>
                   <div className="px-4 py-6 sm:px-6">
                     <ul role="list" className="space-y-8">
-                      {comments.map((comment) => (
-                        <li key={comment.id}>
+                      {dishes.map((dish) => (
+                        <li key={dish.id}>
                           <div className="flex space-x-3">
-                            <div className="flex-shrink-0">
-                              <img
-                                className="h-10 w-10 rounded-full"
-                                src={comment.imageUrl}
-                                alt=""
-                              />
-                            </div>
                             <div>
                               <div className="text-sm">
-                                <a href="#" className="font-medium text-gray-900">
-                                  {comment.name}
-                                </a>
+                                <div className="font-medium text-gray-900">
+                                  {dish.name}
+                                </div>
                               </div>
-                              <div className="mt-1 text-sm text-gray-700">
-                                <p>{comment.body || '-'}</p>
+                              {dish.note && (
+                                <div className="mt-1 text-sm text-gray-700">
+                                  <p>{dish.note}</p>
+                                </div>
+                              )}
+                              <div className="mt-2 space-x-2 text-sm">
+                                <span className="font-medium text-gray-500">{dish.price} VND</span>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Services */}
+            <section aria-labelledby="service-title">
+              <div className="bg-white shadow sm:overflow-hidden sm:rounded-lg">
+                <div className="divide-y divide-gray-200">
+                  <div className="px-4 py-5 sm:px-6">
+                    <h2 id="service-title" className="text-lg font-medium text-gray-900">
+                      Dịch vụ
+                    </h2>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Các dịch vụ trong tiệc cưới</p>
+                  </div>
+                  <div className="px-4 py-6 sm:px-6">
+                    <ul role="list" className="space-y-8">
+                      {services.map((service) => (
+                        <li key={service.id}>
+                          <div className="flex space-x-3">
+                            <div>
+                              <div className="text-sm">
+                                <div className="font-medium text-gray-900">
+                                  {service.name}
+                                </div>
+                              </div>
+                              {service.note && (
+                                <div className="mt-1 text-sm text-gray-700">
+                                  <p>{service.note}</p>
+                                </div>
+                              )}
+                              <div className="mt-2 space-x-2 text-sm">
+                                <span className="font-medium text-gray-500">{service.price} VND</span>
                               </div>
                             </div>
                           </div>
@@ -278,7 +351,7 @@ export default function WeddingInfoPage(props) {
             </section>
           </div>
 
-          <section aria-labelledby="timeline-title" className="lg:col-span-1 lg:col-start-3">
+          <section aria-labelledby="timeline-title" className="space-y-6 lg:col-span-1 lg:col-start-3">
             <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
               <h2 id="timeline-title" className="text-lg font-medium text-gray-900">
                 Mốc thời gian
@@ -311,9 +384,9 @@ export default function WeddingInfoPage(props) {
                             <div>
                               <p className="text-sm text-gray-500">
                                 {item.content}{' '}
-                                <a href="#" className="font-medium text-gray-900">
+                                <span className="font-medium text-gray-900">
                                   {item.target}
-                                </a>
+                                </span>
                               </p>
                             </div>
                             <div className="whitespace-nowrap text-right text-sm text-gray-500">
@@ -326,15 +399,106 @@ export default function WeddingInfoPage(props) {
                   ))}
                 </ul>
               </div>
-              <div className="justify-stretch mt-6 flex flex-col">
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Thanh toán tiền cọc
-                </button>
+              {nextAction && (
+                <div className="justify-stretch mt-6 flex flex-col">
+                  <a
+                    href={nextAction.href}
+                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    {nextAction.buttonText}
+                  </a>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+              <h2 id="timeline-title" className="text-lg font-medium text-gray-900">
+                Hoá đơn
+              </h2>
+
+              <div className="mt-6 flow-root">
+                <ul role="list" className="-my-4 divide-y divide-gray-200">
+                  {receipts.map((receipt) => {
+                    let receiptStatusText = 'Chờ thanh toán';
+                    let statusStyle = statusStyles.processing;
+
+                    if (receipt.isCancelled) {
+                      receiptStatusText = 'Đã huỷ';
+                      statusStyle = statusStyles.cancelled;
+                    }
+                    else if (receipt.isPaid) {
+                      receiptStatusText = 'Đã thanh toán';
+                      statusStyle = statusStyles.success;
+                    }
+                    
+                    return (
+                      <li key={receipt.id} className="flex items-center space-x-3 py-4">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            {receipt.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {receipt.price} VND
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span
+                            className={classNames(
+                              statusStyle,
+                              'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize'
+                            )}
+                          >
+                            {receiptStatusText}
+                          </span>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             </div>
+
+{/*             <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6"> */}
+{/*               <h2 id="timeline-title" className="text-lg font-medium text-gray-900"> */}
+{/*                 Hợp đồng */}
+{/*               </h2> */}
+{/*  */}
+{/*               <div className="mt-6 flow-root"> */}
+{/*                 <ul role="list" className="-my-4 divide-y divide-gray-200"> */}
+{/*                   {contracts.map((contract) => { */}
+{/*                     let statusText = 'Chờ khách kí tên'; */}
+{/*                     let statusStyle = statusStyles.processing; */}
+{/*                     if (contract.isSigned) { */}
+{/*                       statusText = 'Đã kí tên'; */}
+{/*                       statusStyle = statusStyles.success; */}
+{/*                     } */}
+{/*                      */}
+{/*                     return ( */}
+{/*                       <li key={contract.id} className="flex items-center space-x-3 py-4"> */}
+{/*                         <div className="min-w-0 flex-1"> */}
+{/*                           <p className="text-sm font-medium text-gray-900"> */}
+{/*                             Hợp đồng tiệc cưới */}
+{/*                           </p> */}
+{/*                           <p className="text-sm text-gray-500"> */}
+{/*                             {contract.createdAt} */}
+{/*                           </p> */}
+{/*                         </div> */}
+{/*                         <div className="flex-shrink-0"> */}
+{/*                           <span */}
+{/*                             className={classNames( */}
+{/*                               statusStyle, */}
+{/*                               'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize' */}
+{/*                             )} */}
+{/*                           > */}
+{/*                             {statusText} */}
+{/*                           </span> */}
+{/*                         </div> */}
+{/*                       </li> */}
+{/*                     ); */}
+{/*                   })} */}
+{/*                 </ul> */}
+{/*               </div> */}
+{/*             </div> */}
           </section>
         </div>
       </main>
@@ -351,10 +515,12 @@ export const getServerSideProps = async (context) => {
       id,
     },
     select: {
+      id: true,
       groomName: true,
       brideName: true,
       dateOfWedding: true,
       deposit: true,
+      totalPrice: true,
       numOfTables: true,
       phoneNumber: true,
       createdAt: true,
@@ -396,16 +562,59 @@ export const getServerSideProps = async (context) => {
           },
         },
       },
+      receipts: {
+        select: {
+          name: true,
+          isDeposit: true,
+          price: true,
+          isPaid: true,
+          paidAt: true,
+          cancelledAt: true,
+          createdAt: true,
+        },
+        orderBy: {
+          price: 'asc', // HACK: To sort the deposit before totalPrice
+        },
+      },
+      contracts: {
+        select: {
+          description: true,
+          isSigned: true,
+          signedAt: true,
+          createdAt: true,
+        }
+      },
     }
   });
   if (wedding === null) return {
     props: { wedding: null }
   }
 
+  const formattedDishes = wedding.dishes.map(dish => ({
+    ...dish.dish,
+    servingOrder: dish.servingOrder,
+  }));
+  const formattedServices = wedding.services.map(service => service.service);
+  const formattedReceipts = wedding.receipts.map(receipt => ({
+    ...receipt,
+    paidAt: receipt.paidAt ? receipt.paidAt.toISOString().substring(0, 10) : null,
+    cancelledAt: receipt.cancelledAt ? receipt.cancelledAt.toISOString().substring(0, 10) : null,
+    createdAt: receipt.createdAt.toISOString().substring(0, 10),
+  }));
+  const formattedContracts = wedding.contracts.map(contract => ({
+    ...contract,
+    signedAt: contract.signedAt ? contract.signedAt.toISOString().substring(0, 10) : null,
+    createdAt: contract.createdAt.toISOString().substring(0, 10),
+  }));
+
   const formattedWedding = {
     ...wedding,
-      dateOfWedding: wedding.dateOfWedding.toISOString().substring(0, 10),
-      createdAt: wedding.createdAt.toString(),
+    dateOfWedding: wedding.dateOfWedding.toISOString().substring(0, 10),
+    createdAt: wedding.createdAt.toISOString().substring(0, 10),
+    dishes: formattedDishes,
+    services: formattedServices,
+    receipts: formattedReceipts,
+    contracts: formattedContracts,
   }
 
   return {

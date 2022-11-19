@@ -90,90 +90,13 @@ export default function Home(props) {
     })
   });
 
-  // // Uncomment this button to set up DB
+  // // 1. Uncomment this button to set up DB
   // const setupDB = async () => {
   //   await fetch('/api/setup_db', {
   //     method: 'POST',
   //     headers: { 'Content-Type': 'application/json' },
   //   });
   // };
-
-//   const smallPageComponents = weddings.map(wedding => (
-//     <a href={`/weddings/${wedding.id}`} className="block bg-white px-4 py-4 hover:bg-gray-50">
-//       <span className="flex items-center space-x-4">
-//         <span className="flex flex-1 space-x-2 truncate">
-//           <span className="flex flex-col truncate text-sm text-gray-500">
-//             <span className="truncate text-sm font-medium leading-6">
-//               <span className="truncate font-normal text-gray-500">Chú rể </span>
-//               {wedding.groomName}
-//             </span>
-//             <span className="truncate text-sm font-medium leading-6">
-//               <span className="truncate font-normal text-gray-500">Cô dâu </span>
-//               {wedding.brideName}
-//             </span>
-//             <time dateTime={wedding.dateOfWedding}>{wedding.dateOfWedding}</time>
-//           </span>
-//         </span>
-//         <ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-//       </span>
-//     </a>  
-//   ));
-// 
-//   const columns = ["Tiệc cưới", "Sảnh", "Thời gian", "Tình trạng", "Ngày cưới"]
-//   const rows = weddings.map(wedding => ([
-//     {
-//       component: (
-//         <div className="flex">
-//           <a href={`/weddings/${wedding.id}`} className="truncate hover:text-gray-600">
-//             <span>
-//               <span className="text-sm font-medium leading-6">
-//               <span className="font-normal text-gray-500">Chú rể </span>
-//               {wedding.groomName}
-//             </span>
-//             <span className="font-normal text-gray-500">&nbsp;&&nbsp;</span>
-//             <span className="text-sm font-medium leading-6">
-//               <span className="font-normal text-gray-500">Cô dâu </span>
-//               {wedding.brideName}
-//             </span>
-//             </span>
-//           </a>
-//         </div>
-//       ),
-//     },
-//     {
-//       text: wedding.hall.name,
-//     },
-//     {
-//       text: `${wedding.workingShift.startHour}h - ${wedding.workingShift.endHour}h`,
-//     },
-//     {
-//       component: (
-//         <span
-//             className={classNames(
-//               statusStyles[statusTexts[wedding.status]],
-//               'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize'
-//             )}
-//           >
-//             {wedding.status}
-//           </span>
-//       ),
-//       text: wedding.status,
-//     },
-//     {
-//       text: wedding.dateOfWedding,
-//     },
-//   ]));
-// 
-//   return (
-//     <ListPage
-//       pageTitle="Trang chủ"
-//       smallPageTableName="Các tiệc cưới"
-//       smallPageComponents={smallPageComponents}
-//       columns={columns}
-//       rows={rows}
-//       createButtonText="Đặt tiệc cưới"
-//     />
-//   )
 
   return (
     <Layout title="Drinkies" description="Selling drinks">
@@ -182,7 +105,7 @@ export default function Home(props) {
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">Trang chủ</h1>
           </div>
-          {/* Uncomment this button to set up DB */}
+          {/* 2. Uncomment this button to set up DB */}
           {/* <div className="mt-4 flex sm:mt-0 sm:ml-4"> */}
           {/*   <button */}
           {/*     type="button" */}
@@ -233,26 +156,6 @@ export default function Home(props) {
               </li>
             ))}
           </ul>
-
-          {/* <nav */}
-          {/*   className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3" */}
-          {/*   aria-label="Pagination" */}
-          {/* > */}
-          {/*   <div className="flex flex-1 justify-between"> */}
-          {/*     <a */}
-          {/*       href="#" */}
-          {/*       className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-500" */}
-          {/*     > */}
-          {/*       Previous */}
-          {/*     </a> */}
-          {/*     <a */}
-          {/*       href="#" */}
-          {/*       className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-500" */}
-          {/*     > */}
-          {/*       Next */}
-          {/*     </a> */}
-          {/*   </div> */}
-          {/* </nav> */}
         </div>
 
         {/* Activity table (small breakpoint and up) */}
@@ -350,33 +253,6 @@ export default function Home(props) {
                 ))}
               </tbody>
             </table>
-
-            {/* Pagination */}
-            {/* <nav */}
-            {/*   className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6" */}
-            {/*   aria-label="Pagination" */}
-            {/* > */}
-            {/*   <div className="hidden sm:block"> */}
-            {/*     <p className="text-sm text-gray-700"> */}
-            {/*       Showing <span className="font-medium">1</span> to <span className="font-medium">10</span> of{' '} */}
-            {/*       <span className="font-medium">20</span> results */}
-            {/*     </p> */}
-            {/*   </div> */}
-            {/*   <div className="flex flex-1 justify-between sm:justify-end"> */}
-            {/*     <a */}
-            {/*       href="#" */}
-            {/*       className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" */}
-            {/*     > */}
-            {/*       Previous */}
-            {/*     </a> */}
-            {/*     <a */}
-            {/*       href="#" */}
-            {/*       className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" */}
-            {/*     > */}
-            {/*       Next */}
-            {/*     </a> */}
-            {/*   </div> */}
-            {/* </nav> */}
           </div>
         </div>
       </main>

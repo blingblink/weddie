@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -86,6 +86,10 @@ export default function ListPage(props) {
   const [mutableRows, setMutableRows] = useState(values);
   const [rowValue, setRowValue] = useState({});
 
+  useEffect(() => {
+    setMutableRows(values);
+  }, [values]);
+
   const onFieldChange = (key, value) => {
     setRowValue({
       ...rowValue,
@@ -94,6 +98,8 @@ export default function ListPage(props) {
   }
 
   const onRowUpdate = async () => {
+    if (!onUpdate) return;
+
     // Update the display table
     const newRows = [...mutableRows];
     const rowIdx = newRows.findIndex(row => row.id === rowValue.id);
@@ -106,6 +112,8 @@ export default function ListPage(props) {
   }
 
   const onRowCreate = async () => {
+    if (!onCreate) return;
+
     // Update the display table
     setMutableRows([...mutableRows, rowValue]);
 
@@ -115,6 +123,8 @@ export default function ListPage(props) {
   }
 
   const onRowDelete = async () => {
+    if (!onDelete) return;
+
     // Update the display table
     setMutableRows(mutableRows.filter(row => row.id !== rowValue.id));
 
@@ -138,24 +148,35 @@ export default function ListPage(props) {
 
   return (
     <main className="flex-1">
-      <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">{pageTitle}</h1>
+      {(pageTitle || createButtonText) && (
+        <div
+          className={classNames(
+            createButtonText ? "px-4 sm:px-6" : "px-1",
+            "border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between"
+          )}
+        >
+          {pageTitle && (
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">{pageTitle}</h1>
+            </div>
+          )}
+          {createButtonText && (
+            <div className="mt-4 flex sm:mt-0 sm:ml-4">
+              <button
+                type="button"
+                className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
+                onClick={() => {
+                  setIsCreate(true);
+                  setRowValue({});
+                  setSlideOverOpen(true);
+                }}
+              >
+                {createButtonText}
+              </button>
+            </div>
+          )}
         </div>
-        <div className="mt-4 flex sm:mt-0 sm:ml-4">
-          <button
-            type="button"
-            className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
-            onClick={() => {
-              setIsCreate(true);
-              setRowValue({});
-              setSlideOverOpen(true);
-            }}
-          >
-            {createButtonText}
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* List (smallest breakpoint only) */}
       <SmallList
@@ -238,6 +259,7 @@ export default function ListPage(props) {
         onFieldChange={onFieldChange}
         onUpdate={onRowUpdate}
         onCreate={onRowCreate}
+        onDelete={onRowDelete}
         columns={columns}
         rowValue={rowValue}
       />
