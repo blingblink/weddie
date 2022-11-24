@@ -17,11 +17,11 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function DishesPage(props) {
-    const { dishes } = props;
+export default function HallsPage(props) {
+    const { halls } = props;
     const onCreate = async (hall) => {
         try {
-            const res = await fetch('/api/dish', {
+            const res = await fetch('/api/hall', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(hall),
@@ -32,9 +32,9 @@ export default function DishesPage(props) {
             return;
         }
     };
-    const onUpdate = async (dish) => {
+    const onUpdate = async (hall) => {
         try {
-            const res = await fetch('/api/dish', {
+            const res = await fetch('/api/hall', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(hall),
@@ -48,10 +48,10 @@ export default function DishesPage(props) {
 
     const onDelete = async (hall) => {
         try {
-            const res = await fetch('/api/dish', {
+            const res = await fetch('/api/hall', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dish),
+                body: JSON.stringify(hall),
             });
             const resJson = await res.json();
         } catch (error) {
@@ -62,11 +62,21 @@ export default function DishesPage(props) {
     const columns = [
         {
             key: 'name',
-            label: 'Tên Món Ăn',
+            label: 'Tên sảnh',
             type: 'text',
         },
         {
-            key: 'price',
+            key: 'type',
+            label: 'Loại sảnh',
+            type: 'number',
+        },
+        {
+            key: 'maxTables',
+            label: 'Số lượng bàn',
+            type: 'number',
+        },
+        {
+            key: 'pricePerTable',
             label: 'Giá tiền',
             type: 'number',
         },
@@ -77,20 +87,19 @@ export default function DishesPage(props) {
         },
         {
             key: 'isAvailable',
-            label: 'Còn món',
+            label: 'Có thể sử dụng',
             type: 'checkbox',
         },
-
     ]
 
     return (
         <Layout title="Drinkies" description="Selling drinks">
             <ListPage
-                pageTitle="Món Ăn"
-                smallPageTableName="Các Món Ăn"
-                createButtonText="Tạo Món"
+                pageTitle="Sảnh"
+                smallPageTableName="Các sảnh"
+                createButtonText="Tạo sảnh"
                 columns={columns}
-                values={dishes}
+                values={halls}
                 onCreate={onCreate}
                 onUpdate={onUpdate}
                 onDelete={onDelete}
@@ -99,14 +108,16 @@ export default function DishesPage(props) {
     );
 }
 export const getServerSideProps = async () => {
-    const dishes = await prisma.dish.findMany({
+    const halls = await prisma.hall.findMany({
         orderBy: {
             name: "asc",
         },
         select: {
             id: true,
             name: true,
-            price: true,
+            type: true,
+            maxTables: true,
+            pricePerTable: true,
             note: true,
             isAvailable: true,
 
@@ -116,7 +127,7 @@ export const getServerSideProps = async () => {
 
     return {
         props: {
-            dishes,
+            halls,
         },
     }
 }

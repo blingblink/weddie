@@ -227,7 +227,7 @@ export default function ListPage(props) {
                     <td
                       key={`table-row-${rowIdx}-column-${col.key}`}
                       className={classNames(
-                        "whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500",
+                        "px-6 py-4 text-right text-sm text-gray-500",
                       )}
                     >
                       {renderCell(row[col.key])}

@@ -1,5 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator erd {
+  provider = "prisma-erd-generator"
+}
 
 generator client {
   provider = "prisma-client-js"
@@ -112,7 +115,7 @@ model Payment {
   payerName  String
   cardNumber String
   cardExpiry String
-  cardCvc        String
+  cardCvc    String
   createdAt  DateTime @default(now()) @map(name: "created_at")
 }
 
