@@ -40,40 +40,42 @@ export default function WeddingPage(props) {
   const hasWriteAccess = hasPermission({ user, resource: '', action: 'write' });
 
   // // 1. Uncomment this button to set up DB
-  const setupDB = async () => {
-    await fetch('/api/setup_db', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-  };
+  // const setupDB = async () => {
+  //   await fetch('/api/setup_db', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //   });
+  // };
 
   return (
     <Layout title="Drinkies" description="Selling drinks">
       <main className="flex-1">
-        <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6">
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">Trang chủ</h1>
           </div>
           {/* 2. Uncomment this button to set up DB */}
-          <div className="mt-4 flex sm:mt-0 sm:ml-4">
-            <button
-              type="button"
-              className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
-              onClick={async () => await setupDB()}
-            >
-              Setup DB
-            </button>
-          </div>
+          {/* <div className="mt-4 flex sm:mt-0 sm:ml-4"> */}
+          {/*   <button */}
+          {/*     type="button" */}
+          {/*     className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3" */}
+          {/*     onClick={async () => await setupDB()} */}
+          {/*   > */}
+          {/*     Setup DB */}
+          {/*   </button> */}
+          {/* </div> */}
 
-          <div className="mt-4 flex sm:mt-0 sm:ml-4">
-            <button
-              type="button"
-              className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
-              onClick={async () => await Router.push('/weddings/create')}
-            >
-              Đặt tiệc cưới
-            </button>
-          </div>
+          {hasWriteAccess && (
+            <div className="mt-4 flex sm:mt-0 sm:ml-4">
+              <button
+                type="button"
+                className="order-0 inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:order-1 sm:ml-3"
+                onClick={async () => await Router.push('/weddings/create')}
+              >
+                Đặt tiệc cưới
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Activity list (smallest breakpoint only) */}

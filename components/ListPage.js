@@ -155,7 +155,7 @@ export default function ListPage(props) {
 
   return (
     <main className="flex-1">
-      {(pageTitle || createButtonText) && (
+      {(pageTitle || (hasWriteAccess && createButtonText)) && (
         <div
           className={classNames(
             "px-4 sm:px-6",
@@ -167,7 +167,7 @@ export default function ListPage(props) {
               <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">{pageTitle}</h1>
             </div>
           )}
-          {createButtonText && (
+          {hasWriteAccess && createButtonText && (
             <div className="mt-4 flex sm:mt-0 sm:ml-4">
               <button
                 type="button"
