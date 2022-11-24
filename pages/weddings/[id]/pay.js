@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import Router from 'next/router';
 import { Disclosure, Popover, Transition } from '@headlessui/react'
 import { LockClosedIcon } from '@heroicons/react/20/solid'
 import { ChevronRightIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
@@ -102,6 +103,8 @@ export default function PaymentPage(props) {
         ...paymentDetails,
       }),
     });
+
+    await Router.push(`/weddings/${wedding.id}`);
   };
 
   return (

@@ -1,4 +1,5 @@
 import { Fragment, useState, useEffect } from 'react'
+import { useSession } from "next-auth/react";
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -10,6 +11,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/20/solid'
 import CreateOrEditSlideOver from './CreateOrEditSlideOver';
+import { hasPermission } from '../lib/permissions';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -86,6 +88,11 @@ export default function ListPage(props) {
   const [mutableRows, setMutableRows] = useState(values);
   const [rowValue, setRowValue] = useState({});
 
+  const { data: session } = useSession();
+  const isSignedIn = !!(session);
+  const { user } = session || {};
+  const hasWriteAccess = hasPermission({ user, resource: '', action: 'write' });
+  console.log('user', user)
   useEffect(() => {
     setMutableRows(values);
   }, [values]);
@@ -151,7 +158,7 @@ export default function ListPage(props) {
       {(pageTitle || createButtonText) && (
         <div
           className={classNames(
-            createButtonText ? "px-4 sm:px-6" : "px-1",
+            "px-4 sm:px-6",
             "border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between"
           )}
         >
@@ -209,12 +216,14 @@ export default function ListPage(props) {
                     {col.label}
                   </th>
                 ))}
-                <th
-                  className="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
-                  scope="col"
-                >
-                  Hành động
-                </th>
+                {hasWriteAccess && (
+                  <th
+                    className="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
+                    scope="col"
+                  >
+                    Hành động
+                  </th>
+                )}                
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
@@ -233,19 +242,21 @@ export default function ListPage(props) {
                       {renderCell(row[col.key])}
                     </td>
                   ))}
-                  <td className="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
-                    <button
-                      type="button"
-                      className="text-indigo-600 hover:text-indigo-900"
-                      onClick={() => {
-                        setIsCreate(false);
-                        setRowValue(row);
-                        setSlideOverOpen(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </td>
+                  {hasWriteAccess && (
+                    <td className="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
+                      <button
+                        type="button"
+                        className="text-indigo-600 hover:text-indigo-900"
+                        onClick={() => {
+                          setIsCreate(false);
+                          setRowValue(row);
+                          setSlideOverOpen(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

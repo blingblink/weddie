@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import { useSession } from "next-auth/react";
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -11,84 +12,32 @@ import Router from 'next/router';
 import Layout from '../components/Layout';
 import ListPage from '../components/ListPage';
 import prisma from '../lib/prisma'
+import { hasPermission } from '../lib/permissions';
 
-const projects = [
-  {
-    id: 1,
-    title: 'GraphQL API',
-    initials: 'GA',
-    team: 'Engineering',
-    members: [
-      {
-        name: 'Dries Vincent',
-        handle: 'driesvincent',
-        imageUrl:
-          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      },
-      {
-        name: 'Lindsay Walton',
-        handle: 'lindsaywalton',
-        imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      },
-      {
-        name: 'Courtney Henry',
-        handle: 'courtneyhenry',
-        imageUrl:
-          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      },
-      {
-        name: 'Tom Cook',
-        handle: 'tomcook',
-        imageUrl:
-          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      },
-    ],
-    totalMembers: 12,
-    lastUpdated: 'March 17, 2020',
-    pinned: true,
-    bgColorClass: 'bg-pink-600',
-  },
-  // More projects...
-]
-const transactions = [
-  {
-    id: 1,
-    name: 'Payment to Molly Sanders',
-    href: '#',
-    amount: '$20,000',
-    currency: 'USD',
-    status: 'success',
-    date: 'July 11, 2020',
-    datetime: '2020-07-11',
-  },
-  // More transactions...
-]
-const statusStyles = {
-  success: 'bg-green-100 text-green-800',
-  processing: 'bg-yellow-100 text-yellow-800',
-  failed: 'bg-gray-100 text-gray-800',
-}
 
-const statusTexts = {
-  'Đã thanh toán': 'success',
-  'Chờ thanh toán': 'processing',
-  'Huỷ': 'failed',
-}
+const statuses = {
+  paid: {
+    label: 'Đã thanh toán',
+    style: 'bg-green-100 text-green-800',
+  },
+  waiting_for_payment: {
+    label: 'Chưa thanh toán',
+    style: 'bg-yellow-100 text-yellow-800',
+  },
+};
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Home(props) {
+export default function WeddingPage(props) {
   const { weddings } = props;
-  const formattedWeddings = weddings.map(wedding => {
-    // const statusText = Object.keys(statusTexts)[Math.floor(Math.random()*Object.keys(statusTexts).length)];
-    return ({
-      ...wedding,
-      status: 'Đã thanh toán',
-    })
-  });
+  console.log('weddings', weddings)
+
+  const { data: session } = useSession();
+  const isSignedIn = !!(session);
+  const { user } = session || {};
+  const hasWriteAccess = hasPermission({ user, resource: '', action: 'write' });
 
   // // 1. Uncomment this button to set up DB
   const setupDB = async () => {
@@ -194,16 +143,18 @@ export default function Home(props) {
                   >
                     Ngày cưới
                   </th>
-                  <th
-                    className="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
-                    scope="col"
-                  >
-                    Hành động
-                  </th>
+                  {hasWriteAccess && (
+                    <th
+                      className="bg-gray-50 px-6 py-3 text-right text-sm font-semibold text-gray-900"
+                      scope="col"
+                    >
+                      Hành động
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {formattedWeddings.map((wedding) => (
+                {weddings.map((wedding) => (
                   <tr key={wedding.id} className="bg-white">
                     <td className="w-full max-w-0 whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                       <div className="flex">
@@ -231,24 +182,26 @@ export default function Home(props) {
                     <td className="hidden whitespace-nowrap px-6 py-4 text-sm text-gray-500 md:block">
                       <span
                         className={classNames(
-                          statusStyles[statusTexts[wedding.status]],
+                          statuses[wedding.status].style,
                           'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize'
                         )}
                       >
-                        {wedding.status}
+                        {statuses[wedding.status].label}
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
                       <time dateTime={wedding.dateOfWedding}>{wedding.dateOfWedding}</time>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
-                      <button
-                        type="button"
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Edit
-                      </button>
-                    </td>
+                    {hasWriteAccess && (
+                      <td className="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
+                        <button
+                          type="button"
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -277,11 +230,22 @@ export const getServerSideProps = async () => {
           name: true,
         },
       },
+      receipts: {
+        select: {
+          isDeposit: true,
+          isPaid: true,
+        },
+      },
     }
   });
   const formattedWeddings = weddings.map(wedding => {
+    const paidReceipt = wedding.receipts.find(receipt => !receipt.isDeposit && receipt.isPaid);
+    const status = paidReceipt ? 'paid' : 'waiting_for_payment';
+    delete wedding.receipts;
+
     return ({
       ...wedding,
+      status,
       dateOfWedding: wedding.dateOfWedding.toISOString().substring(0, 10),
       createdAt: wedding.createdAt.toISOString().substring(0, 10),
       updatedAt: wedding.updatedAt.toISOString().substring(0, 10),

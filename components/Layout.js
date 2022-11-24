@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Header from "./Header";
 import Head from 'next/head';
+import { signOut, useSession } from 'next-auth/react';
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -20,12 +21,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronLeftIcon, EnvelopeIcon, FunnelIcon, MagnifyingGlassIcon, PhoneIcon } from '@heroicons/react/20/solid'
-
-const user = {
-  name: 'Tom Cook',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
+import { hasPermission } from '../lib/permissions';
 
 const navigation = [
   { name: 'Tiệc cưới', href: '/', icon: HomeIcon, current: false },
@@ -49,6 +45,13 @@ function classNames(...classes) {
 
 const Layout = props => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isSignedIn = !!(session);
+  const { user } = session || {};
+  const hasAccessToPage = hasPermission({ user });
+
+  // TODO: Uncomment this after adding Landing page
+  // if (status !== 'loading' && !hasAccessToPage) return 'No permissions';
 
   return (
     <div className={props.className || 'bg-white'}>
@@ -156,17 +159,40 @@ const Layout = props => {
                     </nav>
                   </div>
                   <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-                    <a href="#" className="group block flex-shrink-0">
+                    <div className="group block flex-shrink-0">
                       <div className="flex items-center">
                         <div>
-                          <img className="inline-block h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                          {isSignedIn ? (
+                            <img className="inline-block h-10 w-10 rounded-full" src={user.image} alt="" />
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="inline-block h-10 w-10 rounded-full">
+                             <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                          
                         </div>
                         <div className="ml-3">
-                          <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
-                          <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">Thông tin cá nhân</p>
+                          {isSignedIn ? (
+                            <>
+                              <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
+                              <button
+                                className="text-sm font-medium text-gray-500 group-hover:text-gray-700"
+                                onClick={() => signOut()}
+                              >
+                                Đăng xuất
+                              </button>
+                            </>
+                          ) : (
+                            <a
+                              href="/api/auth/signin"
+                              className="text-sm font-medium text-gray-500 group-hover:text-gray-700"
+                            >
+                              Đăng nhập
+                            </a>
+                          )}
                         </div>
                       </div>
-                    </a>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -234,17 +260,39 @@ const Layout = props => {
                 </nav>
               </div>
               <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-                <a href="#" className="group block w-full flex-shrink-0">
+                <div className="group block w-full flex-shrink-0">
                   <div className="flex items-center">
                     <div>
-                      <img className="inline-block h-9 w-9 rounded-full" src={user.imageUrl} alt="" />
+                      {isSignedIn ? (
+                        <img className="inline-block h-9 w-9 rounded-full" src={user.image} alt="" />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="inline-block h-10 w-10 rounded-full">
+                         <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
-                      <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">Thông tin cá nhân</p>
+                      {isSignedIn ? (
+                        <>
+                          <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
+                          <button
+                            className="text-xs font-medium text-gray-500 group-hover:text-gray-700"
+                            onClick={() => signOut()}
+                          >
+                            Đăng xuất
+                          </button>
+                        </>
+                      ) : (
+                        <a
+                          href="/api/auth/signin"
+                          className="text-xs font-medium text-gray-500 group-hover:text-gray-700"
+                        >
+                          Đăng nhập
+                        </a>
+                      )}
                     </div>
                   </div>
-                </a>
+                </div>
               </div>
             </div>
           </div>

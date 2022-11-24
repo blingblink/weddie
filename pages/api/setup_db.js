@@ -54,43 +54,44 @@ const postHandler = async (req, res) => {
   }
 
   // Weddings
-  await prisma.wedding.createMany({
-    data: [
-      {
-        groomName: 'Nguyễn Chí D',
-        brideName: 'Nguyễn Ngọc H',
-        dateOfWedding: new Date('2022-11-15'),
-        workingShiftId: shift.id,
-        hallId: halls[0].id,
-        deposit: 5000000,
-        numOfTables: 100,
-        totalPrice: 100 * halls[0].pricePerTable,
-        phoneNumber: '123456789',
-      },
-      {
-        groomName: 'Nguyễn Tiến D',
-        brideName: 'Nguyễn Ngọc H',
-        dateOfWedding: new Date('2022-12-10'),
-        workingShiftId: shift.id,
-        hallId: halls[0].id,
-        deposit: 50000000,
-        numOfTables: 200,
-        totalPrice: 200 * halls[0].pricePerTable,
-        phoneNumber: '123456789',
-      },
-      {
-        groomName: 'Nguyễn Hoàng L',
-        brideName: 'Trương Thanh V',
-        dateOfWedding: new Date('2022-12-28'),
-        workingShiftId: shift.id,
-        hallId: halls[0].id,
-        deposit: 80000000,
-        numOfTables: 500,
-        totalPrice: 500 * halls[0].pricePerTable,
-        phoneNumber: '123456789',
-      },
-    ],
-  });
+  // TODO: create receipts for each wedding
+  // await prisma.wedding.createMany({
+  //   data: [
+  //     {
+  //       groomName: 'Nguyễn Chí D',
+  //       brideName: 'Nguyễn Ngọc H',
+  //       dateOfWedding: new Date('2022-11-15'),
+  //       workingShiftId: shift.id,
+  //       hallId: halls[0].id,
+  //       deposit: 5000000,
+  //       numOfTables: 100,
+  //       totalPrice: 100 * halls[0].pricePerTable,
+  //       phoneNumber: '123456789',
+  //     },
+  //     {
+  //       groomName: 'Nguyễn Tiến D',
+  //       brideName: 'Nguyễn Ngọc H',
+  //       dateOfWedding: new Date('2022-12-10'),
+  //       workingShiftId: shift.id,
+  //       hallId: halls[0].id,
+  //       deposit: 50000000,
+  //       numOfTables: 200,
+  //       totalPrice: 200 * halls[0].pricePerTable,
+  //       phoneNumber: '123456789',
+  //     },
+  //     {
+  //       groomName: 'Nguyễn Hoàng L',
+  //       brideName: 'Trương Thanh V',
+  //       dateOfWedding: new Date('2022-12-28'),
+  //       workingShiftId: shift.id,
+  //       hallId: halls[0].id,
+  //       deposit: 80000000,
+  //       numOfTables: 500,
+  //       totalPrice: 500 * halls[0].pricePerTable,
+  //       phoneNumber: '123456789',
+  //     },
+  //   ],
+  // });
 
   // Dishes
   await prisma.dish.createMany({

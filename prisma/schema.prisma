@@ -200,6 +200,7 @@ model User {
   phoneNumber   String?
   image         String?
   roleId        Int?
+  disabled      Boolean?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
 

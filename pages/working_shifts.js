@@ -68,12 +68,12 @@ export default function WorkingShiftsPage(props) {
     },
     {
       key: 'startHour',
-      label: 'Giờ bắt đầu',
+      label: 'Giờ bắt đầu (24h)',
       type: 'number',
     },
     {
       key: 'endHour',
-      label: 'Giờ kết thúc',
+      label: 'Giờ kết thúc (24h)',
       type: 'number',
     },
   ]
