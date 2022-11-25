@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import * as Yup from 'yup';
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -19,12 +20,12 @@ function classNames(...classes) {
 
 export default function DishesPage(props) {
     const { dishes } = props;
-    const onCreate = async (hall) => {
+    const onCreate = async (dish) => {
         try {
             const res = await fetch('/api/dish', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(hall),
+                body: JSON.stringify(dish),
             });
             const resJson = await res.json();
         } catch (error) {
@@ -37,7 +38,7 @@ export default function DishesPage(props) {
             const res = await fetch('/api/dish', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(hall),
+                body: JSON.stringify(dish),
             });
             const resJson = await res.json();
         } catch (error) {
@@ -46,7 +47,7 @@ export default function DishesPage(props) {
         }
     };
 
-    const onDelete = async (hall) => {
+    const onDelete = async (dish) => {
         try {
             const res = await fetch('/api/dish', {
                 method: 'DELETE',
@@ -61,41 +62,61 @@ export default function DishesPage(props) {
     }
     const columns = [
         {
-            key: 'name',
-            label: 'Tên Món Ăn',
-            type: 'text',
+          key: 'name',
+          label: 'Tên Món Ăn',
+          type: 'text',
+          default: '',
         },
         {
-            key: 'price',
-            label: 'Giá tiền',
-            type: 'number',
+          key: 'price',
+          label: 'Giá tiền',
+          type: 'number',
+          default: 0,
         },
         {
-            key: 'note',
-            label: 'Ghi chú',
-            type: 'text',
+          key: 'note',
+          label: 'Ghi chú',
+          type: 'text',
+          default: '',
         },
         {
-            key: 'isAvailable',
-            label: 'Còn món',
-            type: 'checkbox',
+          key: 'isAvailable',
+          label: 'Còn món',
+          type: 'checkbox',
+          default: true,
         },
-
     ]
 
+    const validationSchema = Yup.object({
+      name: Yup.string()
+        .max(50, 'Nhiều nhất 50 kí tự')
+        .min(1, 'Ít nhất 1 kí tự')
+        .required('Bắt buộc'),
+      price: Yup.number()
+        .required('Bắt buộc')
+        .positive('Phải lớn hơn 0')
+        .integer()
+        .required('Bắt buộc'),
+      note: Yup.string()
+        .max(50, 'Nhiều nhất 100 kí tự'),
+      isAvailable: Yup.boolean()
+        .default(true),
+    });
+
     return (
-        <Layout title="Drinkies" description="Selling drinks">
-            <ListPage
-                pageTitle="Món Ăn"
-                smallPageTableName="Các Món Ăn"
-                createButtonText="Tạo Món"
-                columns={columns}
-                values={dishes}
-                onCreate={onCreate}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-            />
-        </Layout>
+      <Layout title="Drinkies" description="Selling drinks">
+        <ListPage
+          pageTitle="Món Ăn"
+          smallPageTableName="Các Món Ăn"
+          createButtonText="Tạo Món"
+          columns={columns}
+          values={dishes}
+          onCreate={onCreate}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          validationSchema={validationSchema}
+        />
+      </Layout>
     );
 }
 export const getServerSideProps = async () => {

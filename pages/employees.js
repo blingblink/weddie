@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import * as Yup from 'yup';
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -8,6 +9,8 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/20/solid'
 import Router from 'next/router';
+import { authOptions } from './api/auth/[...nextauth]';
+import { unstable_getServerSession } from "next-auth/next";
 import Layout from '../components/Layout';
 import ListPage from '../components/ListPage';
 import prisma from '../lib/prisma'
@@ -19,7 +22,6 @@ function classNames(...classes) {
 export default function EmployeesPage(props) {
   // Only Admin and QuanLy could modify the roles
   const { users } = props;
-  console.log('users', users)
   const onUpdate = async (user) => {
     try {
       const res = await fetch('/api/user', {
@@ -40,24 +42,36 @@ export default function EmployeesPage(props) {
       label: 'Tên nhân viên',
       type: 'text',
       disabled: true,
+      default: '',
     },
     {
       key: 'email',
       label: 'Email',
       type: 'text',
       disabled: true,
+      default: '',
     },
     {
       key: 'roleId',
       label: 'Mã vai trò',
       type: 'number',
+      default: '',
     },
     {
       key: 'disabled',
       label: 'Vô hiệu hoá',
       type: 'checkbox',
+      default: false,
     },
-  ]
+  ];
+  const validationSchema = Yup.object({
+    roleId: Yup.number()
+      .required('Bắt buộc')
+      .positive('Phải lớn hơn 0')
+      .integer(),
+    disabled: Yup.boolean()
+      .default(false),
+  });
 
   return (
     <Layout title="Danh sách nhân viên" description="Quản lý nhân viên">
@@ -72,7 +86,9 @@ export default function EmployeesPage(props) {
   );
 }
 
-export const getServerSideProps = async () => {
+export const getServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(context.req, context.res, authOptions);
+
   const users = await prisma.user.findMany({
     orderBy: {
       updatedAt: "desc",
@@ -88,6 +104,11 @@ export const getServerSideProps = async () => {
           roleId: null,
         },
       ],
+      AND: {
+        id: {
+          not: (session && session.user) ? session.user.id : null,
+        },
+      },
     },
     select: {
       id: true,

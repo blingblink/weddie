@@ -9,6 +9,9 @@ export default function WeddingForm(props) {
     onWeddingChange,
     workingShifts,
     halls,
+    errors,
+    touched,
+    handleBlur,
   } = props;
 
   const objDateOfWedding = new Date(wedding.dateOfWedding);
@@ -17,78 +20,96 @@ export default function WeddingForm(props) {
     shift => shift.weekday === weekdayOfWedding
   );
 
+  const renderError = (field) => (
+    <>
+      {touched[field] && errors[field] && (
+        <div className="mt-2 max-w-xl text-sm text-red-500">
+          <p>{errors[field]}</p>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className="">
       <div className="mt-6 grid grid-cols-4 gap-6">
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="groom-name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="groomName" className="block text-sm font-medium text-gray-700">
             Tên chú rể
           </label>
           <input
             type="text"
-            name="groom-name"
-            id="groom-name"
+            name="groomName"
+            id="groomName"
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             value={wedding.groomName}
-            onChange={evt => onWeddingChange('groomName', evt.target.value)}
+            onChange={onWeddingChange}
+            onBlur={handleBlur}
+            maxLength={50}
           />
+          {renderError('groomName')}
         </div>
 
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="bride-name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="brideName" className="block text-sm font-medium text-gray-700">
             Tên cô dâu
           </label>
           <input
             type="text"
-            name="bride-name"
-            id="bride-name"
+            name="brideName"
+            id="brideName"
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             value={wedding.brideName}
-            onChange={evt => onWeddingChange('brideName', evt.target.value)}
+            onChange={onWeddingChange}
+            onBlur={handleBlur}div
+            maxLength={50}
           />
+          {renderError('brideName')}
         </div>
 
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="contact-number" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
             Điện thoại
           </label>
           <input
             type="text"
-            name="contact-number"
-            id="contact-number"
-            autoComplete="email"
+            name="phoneNumber"
+            id="phoneNumber"
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             value={wedding.phoneNumber}
-            onChange={evt => onWeddingChange('phoneNumber', evt.target.value)}
+            onBlur={handleBlur}
+            onChange={onWeddingChange}
           />
+          {renderError('phoneNumber')}
         </div>
 
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="wedding-date" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="dateOfWedding" className="block text-sm font-medium text-gray-700">
             Ngày cưới
           </label>
           <input
-            type="text"
-            name="wedding-date"
-            id="wedding-date"
-            autoComplete="cc-exp"
+            type="date"
+            name="dateOfWedding"
+            id="dateOfWedding"
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             placeholder="YYYY-MM-DD"
             value={wedding.dateOfWedding}
-            onChange={evt => onWeddingChange('dateOfWedding', evt.target.value)}
+            onChange={onWeddingChange}
+            onBlur={handleBlur}
           />
+          {renderError('dateOfWedding')}
         </div>
 
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="working-shift" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="workingShiftId" className="block text-sm font-medium text-gray-700">
             Ca
           </label>
           <select
-            id="working-shift"
-            name="working-shift"
+            id="workingShiftId"
+            name="workingShiftId"
             className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             disabled={availableWorkingShifts.length < 1}
-            onChange={evt => evt.target.value && onWeddingChange('workingShiftId', evt.target.value)}
+            onChange={evt => evt.target.value && onWeddingChange(evt)}
           >
             {wedding.workingShiftId === null && (<option></option>)}
             {availableWorkingShifts.map(shift => (
@@ -100,18 +121,23 @@ export default function WeddingForm(props) {
               </option>
             ))}
           </select>
+          {wedding.workingShiftId === null && (
+            <div className="mt-2 max-w-xl text-sm text-red-500">
+              <p>Chưa chọn ca (Ca chỉ có thể chọn sau khi điền ngày cưới).</p>
+            </div>
+          )}
         </div>
 
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="hall" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="hallId" className="block text-sm font-medium text-gray-700">
             Sảnh
           </label>
           <select
-            id="hall"
-            name="hall"
+            id="hallId"
+            name="hallId"
             className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             disabled={halls.length < 1}
-            onChange={evt => evt.target.value && onWeddingChange('hallId', evt.target.value)}
+            onChange={evt => evt.target.value && onWeddingChange(evt)}
           >
             {wedding.hallId === null && (<option></option>)}
             {halls.map(hall => (
@@ -123,7 +149,13 @@ export default function WeddingForm(props) {
               </option>
             ))}
           </select>
+          {wedding.hallId === null && (
+            <div className="mt-2 max-w-xl text-sm text-red-500">
+              <p>Chưa chọn sảnh.</p>
+            </div>
+          )}
         </div>
+
         <div className="col-span-4 sm:col-span-2">
           <label htmlFor="deposit" className="block text-sm font-medium text-gray-700">
             Tiền cọc
@@ -134,21 +166,25 @@ export default function WeddingForm(props) {
             id="deposit"
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             value={wedding.deposit}
-            onChange={evt => onWeddingChange('deposit', evt.target.value)}
+            onChange={onWeddingChange}
+            onBlur={handleBlur}
           />
+          {renderError('deposit')}
         </div>
         <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="number-of-tables" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="numOfTables" className="block text-sm font-medium text-gray-700">
             Số lượng bàn
           </label>
           <input
             type="number"
-            name="number-of-tables"
-            id="number-of-tables"
+            name="numOfTables"
+            id="numOfTables"
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             value={wedding.numOfTables}
-            onChange={evt => onWeddingChange('numOfTables', evt.target.value)}
+            onChange={onWeddingChange}
+            onBlur={handleBlur}
           />
+          {renderError('numOfTables')}
         </div>
       </div>
     </div>

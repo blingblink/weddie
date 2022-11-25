@@ -1,4 +1,6 @@
 import { Fragment, useState } from 'react'
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { LinkIcon, PlusIcon, QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
@@ -11,48 +13,59 @@ const DynamicInput = (props) => {
 		value,
 		onChange,
     disabled,
+    onBlur,
+    touched,
+    errors,
 	} = props;
 	if (type === 'checkbox') return (
 		<div className="relative flex items-start">
       <div className="min-w-0 flex-1 text-sm">
-        <label htmlFor={`form-field-${inputKey}`} className="select-none font-medium text-gray-700">
+        <label htmlFor={inputKey} className="select-none font-medium text-gray-700">
         	{label}
         </label>
       </div>
       <div className="ml-3 flex h-5 items-center">
         <input
           type="checkbox"
-          name={`form-field-${inputKey}`}
-          id={`form-field-${inputKey}`}
+          name={inputKey}
+          id={inputKey}
           defaultChecked={value}
-          onChange={event => onChange(inputKey, !value)}
+          onChange={onChange}
           className="h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
           disabled={disabled}
+          onBlur={onBlur}
         />
       </div>
+      {touched[inputKey] && errors[inputKey] && (
+        <div className="mt-2 max-w-xl text-sm text-red-500">
+          <p>{errors[inputKey]}</p>
+        </div>
+      )}
     </div>
 	);
 
 	return (
 		<div>
-			<label htmlFor={`form-field-${inputKey}`} className="block text-sm font-medium text-gray-900">
+			<label htmlFor={inputKey} className="block text-sm font-medium text-gray-900">
         {label}
       </label>
       <div className="mt-1">
         <input
           type={type}
-          name={`form-field-${inputKey}`}
-          id={`form-field-${inputKey}`}
+          name={inputKey}
+          id={inputKey}
           value={value}
-          onChange={event => {
-            let value = event.target.value;
-            if (type === 'number') value = parseInt(value, 10);
-            onChange(inputKey, value);
-          }}
+          onChange={onChange}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
           disabled={disabled}
+          onBlur={onBlur}
         />
       </div>
+      {touched[inputKey] && errors[inputKey] && (
+        <div className="mt-2 max-w-xl text-sm text-red-500">
+          <p>{errors[inputKey]}</p>
+        </div>
+      )}
 		</div>
 	);
 }
@@ -65,11 +78,29 @@ export default function CreateOrEditSlideOver(props) {
     onDelete,
     columns,
     rowValue,
-    onFieldChange,
+    // onFieldChange,
     open,
     setOpen,
+    validationSchema,
   } = props;
   const onSave = isCreate ? onCreate : onUpdate;
+  const initialValues = {};
+  columns.forEach(col => {
+    const value = rowValue[col.key];
+    initialValues[col.key] = (value === null || value === undefined) ? col.default : value;
+  });
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      await onSave({
+        ...rowValue,
+        ...formik.values,
+      });
+    },
+  });
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -89,7 +120,7 @@ export default function CreateOrEditSlideOver(props) {
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+                  <form onSubmit={formik.handleSubmit} className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
                     <div className="h-0 flex-1 overflow-y-auto">
                       <div className="bg-indigo-700 py-6 px-4 sm:px-6">
                         <div className="flex items-center justify-between">
@@ -120,9 +151,12 @@ export default function CreateOrEditSlideOver(props) {
                         				label={column.label}
                         				type={column.type}
                                 inputKey={column.key}
-                                value={rowValue[column.key]}
-                                onChange={onFieldChange}
                                 disabled={column.disabled}
+                                value={formik.values[column.key]}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                touched={formik.touched}
+                                errors={formik.errors}
                         			/>
                         		))}
                         	</div>
@@ -137,7 +171,10 @@ export default function CreateOrEditSlideOver(props) {
                         type="button"
                         className="rounded-md border border-gray-300 bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                         onClick={async () => {
-                          await onDelete();
+                          await onDelete({
+                            ...rowValue,
+                            ...formik.values,
+                          });
                           setOpen(false);
                         }}
                       >
@@ -145,24 +182,27 @@ export default function CreateOrEditSlideOver(props) {
                       </button>
                     </div>
                     <div className="grow" />
-                    <div className="flex flex-shrink-0 justify-end px-4 py-4">
-                      <button
-                        type="button"
-                        className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        onClick={() => setOpen(false)}
-                      >
-                        Huỷ
-                      </button>
-                      <button
-                        // type="submit"
-                        className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        onClick={async () => await onSave()}
-                      >
-                        {isCreate ? 'Tạo' : 'Cập nhật'}
-                      </button>
+                      <div className="flex flex-shrink-0 justify-end px-4 py-4">
+                        <button
+                          type="button"
+                          className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={() => setOpen(false)}
+                        >
+                          Huỷ
+                        </button>
+                        <button
+                          // type="submit"
+                          className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={async () => await onSave({
+                            ...rowValue,
+                            ...formik.values,
+                          })}
+                        >
+                          {isCreate ? 'Tạo' : 'Cập nhật'}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  </div>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

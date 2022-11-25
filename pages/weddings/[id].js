@@ -116,13 +116,13 @@ export default function WeddingInfoPage(props) {
 
   const today = new Date();
   const weddingDate = new Date(wedding.dateOfWedding);
-  if (today > weddingDate)
+  if (today < weddingDate)
     activitiesWithDate.push({
       type: eventTypes.pending,
       content: (
         <span>
           Còn <span className="font-medium text-gray-900">
-            {Math.round((today - weddingDate) / (1000 * 60 * 60 * 24))}
+            {Math.round((weddingDate - today) / (1000 * 60 * 60 * 24))}
           </span>
           {' '}ngày đến ngày cưới{' '}
           <span className="font-medium text-gray-900">
@@ -131,7 +131,7 @@ export default function WeddingInfoPage(props) {
         </span>
       ),
     });
-  else if (today < weddingDate)
+  else if (today > weddingDate)
     activitiesWithDate.push({
       type: eventTypes.completed,
       content: 'Tiệc cưới đã hoàn thành',
@@ -175,12 +175,12 @@ export default function WeddingInfoPage(props) {
             </div>
           </div>
           <div className="justify-stretch mt-6 flex flex-col-reverse space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-y-0 sm:space-x-3 sm:space-x-reverse md:mt-0 md:flex-row md:space-x-3">
-            <button
-              type="button"
+            <a
+              href={`/weddings/${wedding.id}/edit`}
               className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
             >
               Chỉnh sửa
-            </button>
+            </a>
             <a
               href={nextAction.href}
               className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"

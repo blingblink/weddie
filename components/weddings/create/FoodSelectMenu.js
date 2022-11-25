@@ -11,7 +11,9 @@ export default function FoodSelectMenu(props) {
 		dishesForWedding,
 		setDishesForWedding,
 	} = props;
-	const [unchosenDishes, setUnchosenDishes] = useState(dishes);
+  const [unchosenDishes, setUnchosenDishes] = useState(
+    dishes.filter(dish => dishesForWedding.findIndex(dishForWedding => dishForWedding.id === dish.id))
+  );
 
 	const onRowSelect = async (rowIdx) => {
 		// Add dish to the dishes for wedding

@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import * as Yup from 'yup';
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -65,18 +66,38 @@ export default function WorkingShiftsPage(props) {
       key: 'weekday',
       label: 'Ngày trong tuần',
       type: 'number',
+      default: '',
     },
     {
       key: 'startHour',
       label: 'Giờ bắt đầu (24h)',
       type: 'number',
+      default: '',
     },
     {
       key: 'endHour',
       label: 'Giờ kết thúc (24h)',
       type: 'number',
+      default: '',
     },
   ]
+  const validationSchema = Yup.object({
+    weekday: Yup.number()
+      .required('Bắt buộc')
+      .min(0, 'Lớn hơn hoặc bằng 0 (0 là chủ nhật, 6 là thứ bảy).')
+      .max(6, 'Nhỏ hơn hoặc bằng 6 (0 là chủ nhật, 6 là thứ bảy).')
+      .integer(),
+    startHour: Yup.number()
+      .min(0, 'Lớn hơn hoặc bằng 0')
+      .max(24, 'Nhỏ hơn hoặc bằng 24')
+      .integer()
+      .required('Bắt buộc'),
+    endHour: Yup.number()
+      .min(0, 'Lớn hơn hoặc bằng 0')
+      .max(24, 'Nhỏ hơn hoặc bằng 24')
+      .integer()
+      .required('Bắt buộc'),
+  });
 
   return (
     <Layout title="Drinkies" description="Selling drinks">
@@ -89,6 +110,7 @@ export default function WorkingShiftsPage(props) {
         onCreate={onCreate}
         onUpdate={onUpdate}
         onDelete={onDelete}
+        validationSchema={validationSchema}
       />
     </Layout>
   );

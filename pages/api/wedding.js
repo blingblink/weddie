@@ -118,7 +118,7 @@ const putHandler = async (req, res) => {
     dishes,
     services,
   });
-  const result = await prisma.wedding.create({
+  const result = await prisma.wedding.update({
     where: { id },
     data: {
       groomName,

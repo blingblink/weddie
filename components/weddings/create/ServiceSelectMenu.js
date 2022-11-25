@@ -11,7 +11,9 @@ export default function ServiceSelectMenu(props) {
 		servicesForWedding,
 		setServicesForWedding,
 	} = props;
-	const [unchosenServices, setUnchosenServices] = useState(services);
+	const [unchosenServices, setUnchosenServices] = useState(
+    services.filter(service => servicesForWedding.findIndex(serviceForWedding => serviceForWedding.id === service.id))
+  );
 
 	const onRowSelect = async (rowIdx) => {
 		// Add service to the wedding

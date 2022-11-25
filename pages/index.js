@@ -32,7 +32,6 @@ function classNames(...classes) {
 
 export default function WeddingPage(props) {
   const { weddings } = props;
-  console.log('weddings', weddings)
 
   const { data: session } = useSession();
   const isSignedIn = !!(session);
@@ -196,12 +195,12 @@ export default function WeddingPage(props) {
                     </td>
                     {hasWriteAccess && (
                       <td className="whitespace-nowrap px-6 py-3 text-right text-sm font-medium">
-                        <button
-                          type="button"
+                        <a
+                          href={`/weddings/${wedding.id}/edit`}
                           className="text-indigo-600 hover:text-indigo-900"
                         >
-                          Edit
-                        </button>
+                          Chỉnh sửa
+                        </a>
                       </td>
                     )}
                   </tr>

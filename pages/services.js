@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import * as Yup from 'yup';
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
@@ -65,23 +66,42 @@ export default function ServicesPage(props) {
       key: 'name',
       label: 'Tên dịch vụ',
       type: 'text',
+      default: '',
     },
     {
       key: 'price',
       label: 'Giá tiền',
       type: 'number',
+      default: 0,
     },
     {
       key: 'note',
       label: 'Ghi chú',
       type: 'text',
+      default: '',
     },
     {
       key: 'isAvailable',
       label: 'Còn hàng',
       type: 'checkbox',
+      default: true,
     },
-  ]
+  ];
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .max(50, 'Nhiều nhất 50 kí tự')
+      .min(1, 'Ít nhất 1 kí tự')
+      .required('Bắt buộc'),
+    price: Yup.number()
+      .required('Bắt buộc')
+      .positive('Phải lớn hơn 0')
+      .integer()
+      .required('Bắt buộc'),
+    note: Yup.string()
+      .max(50, 'Nhiều nhất 100 kí tự'),
+    isAvailable: Yup.boolean()
+      .default(true),
+  });
 
   return (
     <Layout title="Drinkies" description="Selling drinks">
@@ -94,6 +114,7 @@ export default function ServicesPage(props) {
         onCreate={onCreate}
         onUpdate={onUpdate}
         onDelete={onDelete}
+        validationSchema={validationSchema}
       />
     </Layout>
   );

@@ -82,6 +82,7 @@ export default function ListPage(props) {
     onCreate,
     onUpdate,
     onDelete,
+    validationSchema,
   } = props;
   const [isSlideOverOpen, setSlideOverOpen] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
@@ -92,19 +93,19 @@ export default function ListPage(props) {
   const isSignedIn = !!(session);
   const { user } = session || {};
   const hasWriteAccess = hasPermission({ user, resource: '', action: 'write' });
-  console.log('user', user)
+
   useEffect(() => {
     setMutableRows(values);
   }, [values]);
 
-  const onFieldChange = (key, value) => {
-    setRowValue({
-      ...rowValue,
-      [key]: value,
-    });
-  }
+  // const onFieldChange = (key, value) => {
+  //   setRowValue({
+  //     ...rowValue,
+  //     [key]: value,
+  //   });
+  // }
 
-  const onRowUpdate = async () => {
+  const onRowUpdate = async (rowValue) => {
     if (!onUpdate) return;
 
     // Update the display table
@@ -118,7 +119,7 @@ export default function ListPage(props) {
     setRowValue({});
   }
 
-  const onRowCreate = async () => {
+  const onRowCreate = async (rowValue) => {
     if (!onCreate) return;
 
     // Update the display table
@@ -129,7 +130,7 @@ export default function ListPage(props) {
     setRowValue({});
   }
 
-  const onRowDelete = async () => {
+  const onRowDelete = async (rowValue) => {
     if (!onDelete) return;
 
     // Update the display table
@@ -253,7 +254,7 @@ export default function ListPage(props) {
                           setSlideOverOpen(true);
                         }}
                       >
-                        Edit
+                        Chỉnh sửa
                       </button>
                     </td>
                   )}
@@ -267,12 +268,13 @@ export default function ListPage(props) {
         open={isSlideOverOpen}
         isCreate={isCreate}
         setOpen={setSlideOverOpen}
-        onFieldChange={onFieldChange}
+        // onFieldChange={onFieldChange}
         onUpdate={onRowUpdate}
         onCreate={onRowCreate}
         onDelete={onRowDelete}
         columns={columns}
         rowValue={rowValue}
+        validationSchema={validationSchema}
       />
     </main>
   );

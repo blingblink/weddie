@@ -1,38 +1,35 @@
 import prisma from '../../lib/prisma';
+import { removeEmptyFromObj } from '../../components/utils';
 
 const postHandler = async (req, res) => {
   const {
     name,
-    type,
-    maxTables,
-    pricePerTable,
+    price,
     note,
     isAvailable,
   } = req.body;
 
-  const result = await prisma.hall.create({
-    data: {
-      name,
-      type,
-      maxTables,
-      pricePerTable,
-      note,
-      isAvailable: (isAvailable === null || isAvailable === undefined) ? false : isAvailable,
-    },
-  });
+  const result = await prisma.dish.create({
+      data: {
+        name,
+        price,
+        note,
+        isAvailable : (isAvailable === null || isAvailable === undefined) ? false : isAvailable,
+      },
+    });
   return res.status(201).json(result);
 }
 
 const getHandler = async (req, res) => {
   const { id } = req.query;
-  const hall = await prisma.hall.findUnique({
+  const dish = await prisma.dish.findUnique({
     where: {
       id,
     }
   });
 
   return res.status(201).json({
-    hall,
+    dish,
   });
 }
 
@@ -40,21 +37,19 @@ const putHandler = async (req, res) => {
   const {
     id,
     name,
-    type,
-    maxTables,
-    pricePerTable,
+    price,
     note,
+    isAvailable,
   } = req.body;
   const rawUpdateData = {
     name,
-    type,
-    maxTables,
-    pricePerTable,
+    price,
     note,
+    isAvailable,
   };
   const updateData = removeEmptyFromObj(rawUpdateData);
 
-  const result = await prisma.hall.update({
+  const result = await prisma.dish.update({
     where: { id },
     data: updateData,
   })
@@ -63,7 +58,7 @@ const putHandler = async (req, res) => {
 
 const deleteHandler = async (req, res) => {
   const { id } = req.body;
-  const result = await prisma.hall.delete({
+  const result = await prisma.dish.delete({
     where: {
       id,
     },
