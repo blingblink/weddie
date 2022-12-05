@@ -11,11 +11,13 @@ const DynamicInput = (props) => {
 		type,
 		inputKey,
 		value,
+    acceptableValues,
 		onChange,
     disabled,
     onBlur,
     touched,
     errors,
+    setFieldValue,  // formik's function
 	} = props;
 	if (type === 'checkbox') return (
 		<div className="relative flex items-start">
@@ -43,6 +45,46 @@ const DynamicInput = (props) => {
       )}
     </div>
 	);
+  else if (type === 'multi-checkbox') return (
+    <fieldset>
+      <legend className="text-lg font-medium text-gray-900">{label}</legend>
+      <div className="mt-4 divide-y divide-gray-200 border-t border-b border-gray-200">
+        {acceptableValues.map((acceptableValue) => (
+          <div key={acceptableValue.value} className="relative flex items-start py-4">
+            <div className="min-w-0 flex-1 text-sm">
+              <label htmlFor={`acceptable-values-${acceptableValue.label}`} className="select-none font-medium text-gray-700">
+                {acceptableValue.label}
+              </label>
+            </div>
+            <div className="ml-3 flex h-5 items-center">
+              <input
+                id={`acceptable-values-${acceptableValue.label}`}
+                name={`acceptable-values-${acceptableValue.label}`}
+                type="checkbox"
+                defaultChecked={value.includes(acceptableValue.value)}
+                onChange={() => {
+                  const newValues = [...value];
+
+                  // If the value is in the array, remove it
+                  const index = value.indexOf(acceptableValue.value);
+                  if (index > -1) {
+                    newValues.splice(index, 1);
+                  }
+                  // Otherwises, append it to the end
+                  else newValues.push(acceptableValue.value);
+
+                  setFieldValue(inputKey, newValues);
+                }}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                disabled={disabled}
+                onBlur={onBlur}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </fieldset>
+  );
 
 	return (
 		<div>
@@ -157,6 +199,8 @@ export default function CreateOrEditSlideOver(props) {
                                 onBlur={formik.handleBlur}
                                 touched={formik.touched}
                                 errors={formik.errors}
+                                acceptableValues={column.acceptableValues}
+                                setFieldValue={formik.setFieldValue}
                         			/>
                         		))}
                         	</div>

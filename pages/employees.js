@@ -97,7 +97,7 @@ export const getServerSideProps = async (context) => {
       OR: [
         {
           roleId: {
-            not: 0,
+            not: 0, // Exclude Admin users
           },
         },
         {

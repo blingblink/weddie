@@ -98,13 +98,6 @@ export default function ListPage(props) {
     setMutableRows(values);
   }, [values]);
 
-  // const onFieldChange = (key, value) => {
-  //   setRowValue({
-  //     ...rowValue,
-  //     [key]: value,
-  //   });
-  // }
-
   const onRowUpdate = async (rowValue) => {
     if (!onUpdate) return;
 
@@ -141,17 +134,36 @@ export default function ListPage(props) {
     setRowValue({});
   }
 
-  const renderCell = (val) => {
-    if (val === null || val === undefined || val === '') val = '-';
+  const renderCell = (val, column) => {
+    let renderedValue = val;
+    if (val === null || val === undefined || val === '') renderedValue = '-';
     if (typeof val === 'boolean') {
-      if (val) val = (
+      if (val) renderedValue = (
         <CheckCircleIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
       );
-      else val = (
+      else renderedValue = (
         <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
       );
     }
-    return val;
+    if (column.type === 'multi-checkbox') {
+      // Note: `val`, for this type, is an array of IDs.
+      renderedValue = (
+        <div className="min-w-max">
+          <ul role="list">
+            {val.map((singleValue) => {
+              const labelIdx = column.acceptableValues.findIndex(acceptableValue => acceptableValue.value === singleValue);
+              return (
+                <li key={singleValue}>
+                  {column.acceptableValues[labelIdx].label}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      );
+    }
+
+    return renderedValue;
   };
 
   return (
@@ -168,7 +180,7 @@ export default function ListPage(props) {
               <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">{pageTitle}</h1>
             </div>
           )}
-          {hasWriteAccess && createButtonText && (
+          {hasWriteAccess && createButtonText && onCreate && (
             <div className="mt-4 flex sm:mt-0 sm:ml-4">
               <button
                 type="button"
@@ -240,7 +252,7 @@ export default function ListPage(props) {
                         "px-6 py-4 text-right text-sm text-gray-500",
                       )}
                     >
-                      {renderCell(row[col.key])}
+                      {renderCell(row[col.key], col)}
                     </td>
                   ))}
                   {hasWriteAccess && (

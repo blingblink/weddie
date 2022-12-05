@@ -130,8 +130,6 @@ export const getServerSideProps = async () => {
             price: true,
             note: true,
             isAvailable: true,
-
-
         },
     });
 
