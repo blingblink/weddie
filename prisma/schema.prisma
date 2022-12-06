@@ -29,10 +29,11 @@ model Wedding {
   createdAt      DateTime     @default(now()) @map(name: "created_at")
   updatedAt      DateTime     @updatedAt @map(name: "updated_at")
 
-  dishes    DishForWedding[]
-  services  ServiceForWedding[]
-  receipts  Receipt[]
-  contracts Contract[]
+  dishes                DishForWedding[]
+  services              ServiceForWedding[]
+  receipts              Receipt[]
+  contracts             Contract[]
+  weddingsInDailyReport WeddingsInDailyReport[]
 }
 
 model Hall {
@@ -130,15 +131,33 @@ model Contract {
   updatedAt   DateTime  @updatedAt @map(name: "updated_at")
 }
 
-model Report {
-  id           String   @id @default(cuid())
-  startDate    DateTime
-  endDate      DateTime
-  noOfWeddings Int
-  Revenue      Int
-  Ratio        Float
-  createdAt    DateTime @default(now()) @map(name: "created_at")
-  updatedAt    DateTime @updatedAt @map(name: "updated_at")
+model MonthlyReport {
+  id           String        @id @default(cuid())
+  month        Int
+  year         Int
+  totalRevenue BigInt       
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  dailyReports DailyReport[]
+}
+
+model DailyReport {
+  id                    String                  @id @default(cuid())
+  monthlyReportId       String
+  monthlyReport         MonthlyReport           @relation(fields: [monthlyReportId], references: [id], onDelete: Cascade)
+  date                  DateTime
+  numOfWeddings         Int                     
+  revenue               BigInt                  
+  createdAt             DateTime                @default(now()) @map(name: "created_at")
+  weddingsInDailyReport WeddingsInDailyReport[]
+}
+
+model WeddingsInDailyReport {
+  id            String      @id @default(cuid())
+  weddingId     String
+  wedding       Wedding     @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+  dailyReportId String
+  dailyReport   DailyReport @relation(fields: [dailyReportId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map(name: "created_at")
 }
 
 model WorkingShift {

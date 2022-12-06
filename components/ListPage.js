@@ -83,6 +83,7 @@ export default function ListPage(props) {
     onUpdate,
     onDelete,
     validationSchema,
+    children,
   } = props;
   const [isSlideOverOpen, setSlideOverOpen] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
@@ -198,6 +199,8 @@ export default function ListPage(props) {
         </div>
       )}
 
+      {children}
+
       {/* List (smallest breakpoint only) */}
       <SmallList
         tableName={smallPageTableName}
@@ -243,7 +246,11 @@ export default function ListPage(props) {
               {mutableRows.map((row, rowIdx) => (
                 <tr key={`table-row-${rowIdx}`} className="bg-white">
                   <td className="w-full max-w-0 whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                    {row[columns[0].key]}
+                    {columns[0].href ? (
+                      <a href={columns[0].href(row)} className="truncate hover:text-gray-600">
+                        {row[columns[0].key]}
+                      </a>
+                    ) : row[columns[0].key]}
                   </td>
                   {columns.filter((col, idx) => idx > 0).map((col) => (
                     <td
@@ -252,7 +259,11 @@ export default function ListPage(props) {
                         "px-6 py-4 text-right text-sm text-gray-500",
                       )}
                     >
-                      {renderCell(row[col.key], col)}
+                      {col.href ? (
+                        <a href={col.href(row)} className="truncate hover:text-gray-600">
+                          {renderCell(row[col.key], col)}
+                        </a>
+                      ) : renderCell(row[col.key], col)}
                     </td>
                   ))}
                   {hasWriteAccess && (

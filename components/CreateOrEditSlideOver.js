@@ -13,12 +13,18 @@ const DynamicInput = (props) => {
 		value,
     acceptableValues,
 		onChange,
+    isCreate,
     disabled,
     onBlur,
     touched,
     errors,
     setFieldValue,  // formik's function
 	} = props;
+  let disabledBoolean = false;
+  if (typeof disabled === 'boolean') disabledBoolean = disabled;
+  else if (disabled === 'create' && isCreate) disabledBoolean = true;
+  else if (disabled === 'edit' && !isCreate) disabledBoolean = true;
+
 	if (type === 'checkbox') return (
 		<div className="relative flex items-start">
       <div className="min-w-0 flex-1 text-sm">
@@ -34,7 +40,7 @@ const DynamicInput = (props) => {
           defaultChecked={value}
           onChange={onChange}
           className="h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
-          disabled={disabled}
+          disabled={disabledBoolean}
           onBlur={onBlur}
         />
       </div>
@@ -76,7 +82,7 @@ const DynamicInput = (props) => {
                   setFieldValue(inputKey, newValues);
                 }}
                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                disabled={disabled}
+                disabled={disabledBoolean}
                 onBlur={onBlur}
               />
             </div>
@@ -99,7 +105,7 @@ const DynamicInput = (props) => {
           value={value}
           onChange={onChange}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
-          disabled={disabled}
+          disabled={disabledBoolean}
           onBlur={onBlur}
         />
       </div>
@@ -193,7 +199,9 @@ export default function CreateOrEditSlideOver(props) {
                         				label={column.label}
                         				type={column.type}
                                 inputKey={column.key}
+                                // TODO: Verify the disabledForEdit
                                 disabled={column.disabled}
+                                isCreate={isCreate}
                                 value={formik.values[column.key]}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
@@ -235,12 +243,8 @@ export default function CreateOrEditSlideOver(props) {
                           Huỷ
                         </button>
                         <button
-                          // type="submit"
+                          type="submit"
                           className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                          onClick={async () => await onSave({
-                            ...rowValue,
-                            ...formik.values,
-                          })}
                         >
                           {isCreate ? 'Tạo' : 'Cập nhật'}
                         </button>
