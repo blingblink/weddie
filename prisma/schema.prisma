@@ -135,7 +135,7 @@ model MonthlyReport {
   id           String        @id @default(cuid())
   month        Int
   year         Int
-  totalRevenue BigInt       
+  totalRevenue BigInt
   createdAt    DateTime      @default(now()) @map(name: "created_at")
   dailyReports DailyReport[]
 }
@@ -145,8 +145,8 @@ model DailyReport {
   monthlyReportId       String
   monthlyReport         MonthlyReport           @relation(fields: [monthlyReportId], references: [id], onDelete: Cascade)
   date                  DateTime
-  numOfWeddings         Int                     
-  revenue               BigInt                  
+  numOfWeddings         Int
+  revenue               BigInt
   createdAt             DateTime                @default(now()) @map(name: "created_at")
   weddingsInDailyReport WeddingsInDailyReport[]
 }
@@ -211,6 +211,13 @@ model Session {
   @@map(name: "sessions")
 }
 
+model Role {
+  id        Int      @id
+  name      String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  User      User[]
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -219,6 +226,7 @@ model User {
   phoneNumber   String?
   image         String?
   roleId        Int?
+  role          Role?     @relation(fields: [roleId], references: [id])
   disabled      Boolean?  @default(false)
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")

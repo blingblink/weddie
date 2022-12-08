@@ -27,7 +27,10 @@ const products = [
   // More products...
 ]
 
-const getNameFromFullName = (fullName) => fullName.split(' ')[fullName.length - 1];
+const getNameFromFullName = (fullName) => {
+  const words = fullName.split(' ');
+  return words[words.length - 1];
+};
 
 export default function PaymentPage(props) {
   const { wedding } = props;
@@ -88,7 +91,8 @@ export default function PaymentPage(props) {
   const finalReceipt = receipts.reverse().find(receipt => !receipt.isDeposit);
   const receiptToPay = (!depositReceipt.isPaid && depositReceipt) || (!finalReceipt.isPaid && finalReceipt);
   const finalPriceAfterDeposit = finalReceipt.price - depositReceipt.price;
-  const percentageOfPriceAfterDeposit = ((finalPriceAfterDeposit / finalReceipt.price) * 100).toFixed(2);
+  const percentageOfPriceAfterDeposit = ((finalPriceAfterDeposit / finalReceipt.price) * 100).toFixed(3);
+  const percentageOfDeposit = ((depositReceipt.price / finalReceipt.price) * 100).toFixed(3);
   const priceToPay = (receiptToPay && receiptToPay.isDeposit ? receiptToPay.price : finalPriceAfterDeposit);
 
   const onSubmit = async e => {
@@ -165,13 +169,27 @@ export default function PaymentPage(props) {
                 <dd>{finalReceipt.price} VND</dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-gray-600">
-                  Chỉ thanh toán tiền cọc
-                  <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
-                    -{percentageOfPriceAfterDeposit}%
-                  </span>
-                </dt>
-                <dd>-{finalPriceAfterDeposit} VND</dd>
+                {receiptToPay.isDeposit ? (
+                  <>
+                    <dt className="text-gray-600">
+                      Chỉ thanh toán tiền cọc
+                      <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                        -{percentageOfPriceAfterDeposit}%
+                      </span>
+                    </dt>
+                    <dd>-{finalPriceAfterDeposit} VND</dd>
+                  </>
+                ) : (
+                  <>
+                    <dt className="text-gray-600">
+                      Tiền cọc
+                      <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                        -{percentageOfDeposit}%
+                      </span>
+                    </dt>
+                    <dd>-{depositReceipt.price} VND</dd>
+                  </>
+                )}
               </div>
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-6">
@@ -184,8 +202,8 @@ export default function PaymentPage(props) {
               <div className="relative z-10 border-t border-gray-200 bg-white px-4 sm:px-6">
                 <div className="mx-auto max-w-lg">
                   <Popover.Button className="flex w-full items-center py-6 font-medium">
-                    <span className="mr-auto text-base">Total</span>
-                    <span className="mr-2 text-base">$361.80</span>
+                    <span className="mr-auto text-base">{receiptToPay && receiptToPay.isDeposit ? 'Tiền cọc' : 'Tổng tiền'}</span>
+                    <span className="mr-2 text-base">{priceToPay} VND</span>
                     <ChevronUpIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
                   </Popover.Button>
                 </div>
@@ -216,20 +234,35 @@ export default function PaymentPage(props) {
                   >
                     <Popover.Panel className="relative bg-white px-4 py-6 sm:px-6">
                       <dl className="mx-auto max-w-lg space-y-6">
+                        {orderItems.map((item) => (
+                          <div key={item.name} className="flex items-center justify-between">
+                            <dt className="text-gray-600">{item.name}</dt>
+                            <dd>{item.price}</dd>
+                          </div>
+                        ))}
                         <div className="flex items-center justify-between">
-                          <dt className="text-gray-600">Subtotal</dt>
-                          <dd>$320.00</dd>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <dt className="text-gray-600">Shipping</dt>
-                          <dd>$15.00</dd>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <dt className="text-gray-600">Taxes</dt>
-                          <dd>$26.80</dd>
-                        </div>
+                        {receiptToPay.isDeposit ? (
+                          <>
+                            <dt className="text-gray-600">
+                              Chỉ thanh toán tiền cọc
+                              <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                                -{percentageOfPriceAfterDeposit}%
+                              </span>
+                            </dt>
+                            <dd>-{finalPriceAfterDeposit} VND</dd>
+                          </>
+                        ) : (
+                          <>
+                            <dt className="text-gray-600">
+                              Tiền cọc
+                              <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                                -{percentageOfDeposit}%
+                              </span>
+                            </dt>
+                            <dd>-{depositReceipt.price} VND</dd>
+                          </>
+                        )}
+                      </div>
                       </dl>
                     </Popover.Panel>
                   </Transition.Child>
@@ -350,6 +383,7 @@ export const getServerSideProps = async (context) => {
       id,
     },
     select: {
+      id: true,
       groomName: true,
       brideName: true,
       dateOfWedding: true,

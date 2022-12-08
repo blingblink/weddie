@@ -29,7 +29,7 @@ const navigation = [
   { name: 'Dịch vụ', href: '/services', icon: TruckIcon, current: false },
   { name: 'Món ăn', href: '/dishes', icon: ShoppingCartIcon, current: false },
   { name: 'Các ca làm việc', href: '/working_shifts', icon: CalendarIcon, current: false },
-  { name: 'Ca trực nhân viên', href: '/working_schedules', icon: CalendarDaysIcon, current: false },
+  { name: 'Lịch làm việc nhân viên', href: '/working_schedules', icon: CalendarDaysIcon, current: false },
   { name: 'Nhân viên', href: '/employees', icon: UserGroupIcon, current: false },
   { name: 'Báo cáo', href: '/reports', icon: DocumentChartBarIcon, current: false },
 ]

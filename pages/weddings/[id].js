@@ -181,12 +181,14 @@ export default function WeddingInfoPage(props) {
             >
               Chỉnh sửa
             </a>
-            <a
-              href={nextAction.href}
-              className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
-            >
-              {nextAction.buttonText}
-            </a>
+            {nextAction && (
+              <a
+                href={nextAction.href}
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
+              >
+                {nextAction.buttonText}
+              </a>
+            )}
           </div>
         </div>
 
@@ -222,6 +224,10 @@ export default function WeddingInfoPage(props) {
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500">Điện thoại</dt>
                       <dd className="mt-1 text-sm text-gray-900">{wedding.phoneNumber || '-'}</dd>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">Số bàn</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{wedding.numOfTables || '-'}</dd>
                     </div>
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500">Thời gian</dt>
@@ -433,14 +439,14 @@ export default function WeddingInfoPage(props) {
                     
                     return (
                       <li key={receipt.id} className="flex items-center space-x-3 py-4">
-                        <div className="min-w-0 flex-1">
+                        <a href={`/weddings/${wedding.id}/pay`} className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-gray-900">
                             {receipt.name}
                           </p>
                           <p className="text-sm text-gray-500">
                             {receipt.price} VND
                           </p>
-                        </div>
+                        </a>
                         <div className="flex-shrink-0">
                           <span
                             className={classNames(

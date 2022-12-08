@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react'
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Dialog, Switch, Transition, RadioGroup, Menu } from '@headlessui/react'
@@ -49,6 +49,7 @@ export default function WeddingCreateOrEditMenu(props) {
     newDishes.sort((firstDish, secondDish) => firstDish.servingOrder - secondDish.servingOrder);
     setDishesForWedding(newDishes);
   };
+  const isCreate = wedding ? false : true;
 
   const formik = useFormik({
     initialValues: wedding || {
@@ -92,22 +93,38 @@ export default function WeddingCreateOrEditMenu(props) {
         .integer(),
     }),
     onSubmit: async (wedding) => {
-      let requestData = {
-        ...wedding,
-        // deposit: parseInt(wedding.deposit),
-        // numOfTables: parseInt(wedding.numOfTables),
-        dishes: mutableDishesForWedding,
-        services: mutableServicesForWedding,
-      };
+      let requestData;
+      let response;
 
-      const response = await fetch('/api/wedding', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData),
-      });
-      const createdWedding = await createdWedding.json();
+      if (isCreate) {
+        requestData = {
+          ...wedding,
+          dishes: mutableDishesForWedding,
+          services: mutableServicesForWedding,
+        };
+
+        response = await fetch('/api/wedding', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestData),
+        });
+      } else {
+        requestData = {
+          ...wedding,
+          dishes: mutableDishesForWedding,
+          services: mutableServicesForWedding,
+        };
+
+        response = await fetch('/api/wedding', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestData),
+        });
+      }
+      
+      const createdWedding = await response.json();
       const weddingId = createdWedding.id;
-      await Router.push('/')
+      await Router.push(`/weddings/${weddingId}`);
     },
   });
 
@@ -196,7 +213,7 @@ export default function WeddingCreateOrEditMenu(props) {
                         type="submit"
                         className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                       >
-                        Cập nhật
+                        {isCreate ? 'Tạo' : 'Cập nhật'}
                       </button>
                     </div>
                   </form>
