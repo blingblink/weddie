@@ -69,6 +69,8 @@ export default function EmployeesPage(props) {
     roleId: Yup.number()
       .required('Bắt buộc')
       .positive('Phải lớn hơn 0')
+      .min(0, 'Phải lớn hơn 0')
+      .max(5, 'Chỉ có 4 vai trò')
       .integer(),
     disabled: Yup.boolean()
       .default(false),

@@ -20,6 +20,9 @@ const postHandler = async (req, res) => {
       isAvailable: (isAvailable === null || isAvailable === undefined) ? false : isAvailable,
     },
   });
+
+  // INSERT INTO Hall (name, type, maxTables, pricePerTable, note, isAvailable)
+  // values ($1, $2, $3, $4, $5, $6);
   return res.status(201).json(result);
 }
 
@@ -68,6 +71,7 @@ const deleteHandler = async (req, res) => {
       id,
     },
   });
+  // DELETE FROM Hall WHERE hall.id = $1;
 
   return res.status(201).json(result);
 }

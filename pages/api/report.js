@@ -6,7 +6,7 @@ const getLastDateOfMonth = (month, year) => new Date(year, month, 0);
 
 const postHandler = async (req, res) => {
   const {
-  	month,
+    month,
     year,
   } = req.body;
 
@@ -26,6 +26,27 @@ const postHandler = async (req, res) => {
   //     dateOfWedding: 2023-10-22T00:00:00.000Z
   //   }
   // ]
+
+  //  Date | totalPrice | count
+  //  20/10  100       2
+  //  21/10  120       3
+  //  25/10  500       1
+
+  // Vd: Bao cao cho thang 3/2020
+  //  SELECT
+  //    Wedding.dateOfWedding,
+  //    COUNT(*),
+  //    SUM(Wedding.totalPrice) 
+  //  FROM Wedding
+  //  WHERE
+  //    Wedding.dateOfWedding >= '2020/03/01'
+  //    AND Wedding.dateOfWedding <= '2020/03/31'
+  //    AND EXISTS (
+  //      SELECT 1
+  //      FROM Receipt
+  //      WHERE Receipt.isDeposit = 0 AND Receipt.isPaid = 1
+  //    )
+  //  GROUP BY Wedding.dateOfWedding;
   const monthlyReport = await prisma.wedding.groupBy({
     by: ['dateOfWedding'],
     _count: {

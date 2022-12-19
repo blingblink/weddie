@@ -239,6 +239,14 @@ export const getServerSideProps = async () => {
       },
     }
   });
+
+  // SELECT *
+  // FROM Wedding
+  // INNER JOIN Hall ON Wedding.weddingid = Hall.id
+  // INNER JOIN WorkingShift on wedding.workingShiftId = workingShift.id
+  // INNER JOIN Receipt on wedding.receiptId = receipt.id
+  // ORDER BY Wedding.dateOfWedding DESC;
+
   const formattedWeddings = weddings.map(wedding => {
     const paidReceipt = wedding.receipts.find(receipt => !receipt.isDeposit && receipt.isPaid);
     const status = paidReceipt ? 'paid' : 'waiting_for_payment';

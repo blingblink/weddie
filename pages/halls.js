@@ -99,29 +99,31 @@ export default function HallsPage(props) {
         },
     ];
     const validationSchema = Yup.object({
-      name: Yup.string()
-        .max(50, 'Nhiều nhất 50 kí tự')
-        .min(1, 'Ít nhất 1 kí tự')
-        .required('Bắt buộc'),
-      type: Yup.number()
-        .required('Bắt buộc')
-        .positive('Phải lớn hơn 0')
-        .integer()
-        .required('Bắt buộc'),
-      maxTables: Yup.number()
-        .required('Bắt buộc')
-        .positive('Phải lớn hơn 0')
-        .integer()
-        .required('Bắt buộc'),
-      pricePerTable: Yup.number()
-        .required('Bắt buộc')
-        .positive('Phải lớn hơn 0')
-        .integer()
-        .required('Bắt buộc'),
-      note: Yup.string()
-        .max(50, 'Nhiều nhất 100 kí tự'),
-      isAvailable: Yup.boolean()
-        .default(true),
+        name: Yup.string()
+            .max(50, 'Nhiều nhất 50 kí tự')
+            .min(1, 'Ít nhất 1 kí tự')
+            .required('Bắt buộc'),
+        type: Yup.number()
+            .required('Bắt buộc')
+            .positive('Phải lớn hơn 0')
+            .integer()
+            .required('Bắt buộc'),
+        maxTables: Yup.number()
+            .required('Bắt buộc')
+            .positive('Phải lớn hơn 0')
+            .integer()
+            .required('Bắt buộc'),
+        pricePerTable: Yup.number()
+            .min(1500000, 'Giá bàn phải lớn hơn 1,500,000 VND')
+            .max(5000000, 'Giá bàn phải nhỏ hơn 5000000')
+            .required('Bắt buộc')
+
+            .integer()
+            .required('Bắt buộc'),
+        note: Yup.string()
+            .max(50, 'Nhiều nhất 100 kí tự'),
+        isAvailable: Yup.boolean()
+            .default(true),
     });
 
     return (

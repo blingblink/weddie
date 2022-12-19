@@ -22,9 +22,9 @@ import ServiceSelectMenu from './ServiceSelectMenu';
 import FoodSelectMenu from './FoodSelectMenu';
 
 const tabs = [
-  {name: 'Thông tin cơ bản', component: WeddingForm},
-  {name: 'Dịch vụ', component: ServiceSelectMenu},
-  {name: 'Món ăn', component: FoodSelectMenu},
+  { name: 'Thông tin cơ bản', component: WeddingForm },
+  { name: 'Dịch vụ', component: ServiceSelectMenu },
+  { name: 'Món ăn', component: FoodSelectMenu },
 ]
 
 function classNames(...classes) {
@@ -82,7 +82,9 @@ export default function WeddingCreateOrEditMenu(props) {
         .required('Bắt buộc'),
       phoneNumber: Yup.string()
         .matches(/^[0-9]+$/, "Chỉ có thể nhập số")
-        .required('Bắt buộc'),
+        .required('Bắt buộc')
+        .min(10, 'ít nhất 8 số')
+        .max(12, 'Nhiều nhất 12 số'),
       deposit: Yup.number()
         .required('Bắt buộc')
         .positive('Phải lớn hơn 0')
@@ -121,7 +123,7 @@ export default function WeddingCreateOrEditMenu(props) {
           body: JSON.stringify(requestData),
         });
       }
-      
+
       const createdWedding = await response.json();
       const weddingId = createdWedding.id;
       await Router.push(`/weddings/${weddingId}`);
