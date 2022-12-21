@@ -34,6 +34,8 @@ const getNameFromFullName = (fullName) => {
 
 export default function PaymentPage(props) {
   const { wedding } = props;
+  if (!wedding) return;
+
   const {
     hall,
     workingShift,

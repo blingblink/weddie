@@ -63,6 +63,7 @@ export default function WorkingSchedulesPage(props) {
         columns={columns}
         values={users}
         onUpdate={onUpdate}
+        resource="working_schedule"
       />
     </Layout>
   );

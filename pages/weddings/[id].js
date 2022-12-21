@@ -82,7 +82,7 @@ export default function WeddingInfoPage(props) {
   const activitiesWithDate = [];
   const pendingActivities = [];
 
-  if (depositReceipt.isPaid)
+  if (depositReceipt && depositReceipt.isPaid)
     activitiesWithDate.push({
       type: eventTypes.completed,
       content: 'Tiền cọc đã được thanh toán',
@@ -98,7 +98,7 @@ export default function WeddingInfoPage(props) {
     actions.push(nextActions.payDeposit);
   }
 
-  if (finalReceipt.isPaid)
+  if (finalReceipt && finalReceipt.isPaid)
     activitiesWithDate.push({
       type: eventTypes.completed,
       content: 'Tổng tiền đã được thanh toán bởi',
@@ -226,7 +226,7 @@ export default function WeddingInfoPage(props) {
                       <dd className="mt-1 text-sm text-gray-900">{wedding.phoneNumber || '-'}</dd>
                     </div>
                     <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Số bàn</dt>
+                      <dt className="text-sm font-medium text-gray-500">Số bàn  </dt>
                       <dd className="mt-1 text-sm text-gray-900">{wedding.numOfTables || '-'}</dd>
                     </div>
                     <div className="sm:col-span-1">

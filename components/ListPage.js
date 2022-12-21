@@ -83,6 +83,7 @@ export default function ListPage(props) {
     onUpdate,
     onDelete,
     validationSchema,
+    resource,
     children,
   } = props;
   const [isSlideOverOpen, setSlideOverOpen] = useState(false);
@@ -93,11 +94,15 @@ export default function ListPage(props) {
   const { data: session } = useSession();
   const isSignedIn = !!(session);
   const { user } = session || {};
-  const hasWriteAccess = hasPermission({ user, resource: '', action: 'write' });
+  const hasWriteAccess = hasPermission({ user, resource: resource, action: 'write' });
+  const hasReadAccess = hasPermission({ user, resource: resource, action: 'read' });
 
   useEffect(() => {
     setMutableRows(values);
   }, [values]);
+
+  if (!hasReadAccess) return;
+
 
   const onRowUpdate = async (rowValue) => {
     if (!onUpdate) return;

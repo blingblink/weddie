@@ -24,14 +24,14 @@ import { ChevronLeftIcon, EnvelopeIcon, FunnelIcon, MagnifyingGlassIcon, PhoneIc
 import { hasPermission } from '../lib/permissions';
 
 const navigation = [
-  { name: 'Tiệc cưới', href: '/', icon: HomeIcon, current: false },
-  { name: 'Sảnh', href: '/halls', icon: MapIcon, current: false },
-  { name: 'Dịch vụ', href: '/services', icon: TruckIcon, current: false },
-  { name: 'Món ăn', href: '/dishes', icon: ShoppingCartIcon, current: false },
-  { name: 'Các ca làm việc', href: '/working_shifts', icon: CalendarIcon, current: false },
-  { name: 'Lịch làm việc nhân viên', href: '/working_schedules', icon: CalendarDaysIcon, current: false },
-  { name: 'Nhân viên', href: '/employees', icon: UserGroupIcon, current: false },
-  { name: 'Báo cáo', href: '/reports', icon: DocumentChartBarIcon, current: false },
+  { name: 'Tiệc cưới', href: '/', icon: HomeIcon },
+  { name: 'Sảnh', href: '/halls', icon: MapIcon },
+  { name: 'Dịch vụ', href: '/services', icon: TruckIcon },
+  { name: 'Món ăn', href: '/dishes', icon: ShoppingCartIcon },
+  { name: 'Các ca làm việc', href: '/working_shifts', icon: CalendarIcon },
+  { name: 'Lịch làm việc nhân viên', href: '/working_schedules', icon: CalendarDaysIcon },
+  { name: 'Nhân viên', href: '/employees', icon: UserGroupIcon },
+  { name: 'Báo cáo', href: '/reports', icon: DocumentChartBarIcon },
 ]
 
 const secondaryNavigation = [

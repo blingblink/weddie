@@ -110,6 +110,7 @@ export default function ReportsPage(props) {
         onCreate={onCreate}
         onDelete={onDelete}
         validationSchema={validationSchema}
+        resource="report"
       />
     </Layout>
   );

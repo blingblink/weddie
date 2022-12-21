@@ -19,7 +19,7 @@ const postHandler = async (req, res) => {
     dateOfWedding,
     workingShiftId,
     hallId,
-    deposit,
+    // deposit,
     numOfTables,
     phoneNumber,
     dishes,
@@ -32,6 +32,7 @@ const postHandler = async (req, res) => {
     dishes,
     services,
   });
+  const deposit = Math.ceil(totalPrice / 2);
   const result = await prisma.wedding.create({
     data: {
       groomName,
@@ -94,7 +95,7 @@ const putHandler = async (req, res) => {
     dateOfWedding,
     workingShiftId,
     hallId,
-    deposit,
+    // deposit,
     numOfTables,
     dishes,
     services,
@@ -118,6 +119,7 @@ const putHandler = async (req, res) => {
     dishes,
     services,
   });
+  const deposit = Math.ceil(totalPrice / 2);
   const result = await prisma.wedding.update({
     where: { id },
     data: {
@@ -142,6 +144,57 @@ const putHandler = async (req, res) => {
       },
     },
   });
+
+  // Hoá đơn đặt cọc
+  const depositReceipt = await prisma.receipt.findFirst({
+    where: {
+      weddingId: id,
+      isDeposit: true,
+    },
+    select: {
+      id: true,
+    },
+  });
+  await prisma.receipt.update({
+    where: {
+      id: depositReceipt.id,
+    },
+    data: {
+      price: deposit,
+    },
+  });
+
+  // Hoá đơn tổng tiền
+  const totalPriceReceipt = await prisma.receipt.findFirst({
+    where: {
+      weddingId: id,
+      isDeposit: false,
+    },
+    select: {
+      id: true,
+    },
+  });
+  await prisma.receipt.update({
+    where: {
+      id: totalPriceReceipt.id,
+    },
+    data: {
+      price: totalPrice,
+    },
+  });
+
+  return res.status(201).json(result);
+}
+
+
+const deleteHandler = async (req, res) => {
+  const { id } = req.body;
+  const result = await prisma.wedding.delete({
+    where: {
+      id,
+    },
+  });
+
   return res.status(201).json(result);
 }
 
@@ -149,7 +202,7 @@ export default function handler(req, res) {
   if (req.method === 'POST') return postHandler(req, res);
   // else if (req.method === 'GET') return getHandler(req, res);
   else if (req.method === 'PUT') return putHandler(req, res);
-  // else if (req.method === 'DELETE') return deleteHandler(req, res);
+  else if (req.method === 'DELETE') return deleteHandler(req, res);
 
   res.status(404).send("");
 }

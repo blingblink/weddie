@@ -12,6 +12,7 @@ export default function WeddingEditPage(props) {
     dishes,
     services,
   } = props;
+  if (!wedding) return;
 
   return (
     <Layout title="Drinkies" description="Selling drinks">
@@ -90,6 +91,8 @@ export const getServerSideProps = async (context) => {
       phoneNumber: true,
     },
   });
+  if (!wedding) return { props: {} };
+
   wedding.dateOfWedding = wedding.dateOfWedding.toISOString().substring(0, 10);
 
   // Restaurant's data

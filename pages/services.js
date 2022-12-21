@@ -115,6 +115,7 @@ export default function ServicesPage(props) {
         onUpdate={onUpdate}
         onDelete={onDelete}
         validationSchema={validationSchema}
+        resource="service"
       />
     </Layout>
   );

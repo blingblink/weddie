@@ -75,9 +75,9 @@ model Service {
 model DishForWedding {
   id           String   @id @default(cuid())
   dishId       String
-  dish         Dish     @relation(fields: [dishId], references: [id])
+  dish         Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
   weddingId    String
-  wedding      Wedding  @relation(fields: [weddingId], references: [id])
+  wedding      Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   servingOrder Int      @default(1)
   createdAt    DateTime @default(now()) @map(name: "created_at")
   updatedAt    DateTime @updatedAt @map(name: "updated_at")
@@ -86,9 +86,9 @@ model DishForWedding {
 model ServiceForWedding {
   id        String   @id @default(cuid())
   serviceId String
-  service   Service  @relation(fields: [serviceId], references: [id])
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   weddingId String
-  wedding   Wedding  @relation(fields: [weddingId], references: [id])
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @updatedAt @map(name: "updated_at")
 }
@@ -96,7 +96,7 @@ model ServiceForWedding {
 model Receipt {
   id          String    @id @default(cuid())
   weddingId   String
-  wedding     Wedding   @relation(fields: [weddingId], references: [id])
+  wedding     Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   name        String
   isDeposit   Boolean   @default(false)
   price       Int
@@ -112,7 +112,7 @@ model Receipt {
 model Payment {
   id         String   @id @default(cuid())
   receiptId  String   @unique
-  receipt    Receipt  @relation(fields: [receiptId], references: [id])
+  receipt    Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
   payerName  String
   cardNumber String
   cardExpiry String
@@ -123,7 +123,7 @@ model Payment {
 model Contract {
   id          String    @id @default(cuid())
   weddingId   String
-  wedding     Wedding   @relation(fields: [weddingId], references: [id])
+  wedding     Wedding   @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   description String
   isSigned    Boolean   @default(false)
   signedAt    DateTime?

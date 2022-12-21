@@ -61,7 +61,7 @@ export default function WeddingForm(props) {
             className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
             value={wedding.brideName}
             onChange={onWeddingChange}
-            onBlur={handleBlur}div
+            onBlur={handleBlur}
             maxLength={50}
           />
           {renderError('brideName')}
@@ -156,21 +156,21 @@ export default function WeddingForm(props) {
           )}
         </div>
 
-        <div className="col-span-4 sm:col-span-2">
-          <label htmlFor="deposit" className="block text-sm font-medium text-gray-700">
-            Tiền cọc
-          </label>
-          <input
-            type="number"
-            name="deposit"
-            id="deposit"
-            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
-            value={wedding.deposit}
-            onChange={onWeddingChange}
-            onBlur={handleBlur}
-          />
-          {renderError('deposit')}
-        </div>
+        {/* <div className="col-span-4 sm:col-span-2"> */}
+        {/*   <label htmlFor="deposit" className="block text-sm font-medium text-gray-700"> */}
+        {/*     Tiền cọc */}
+        {/*   </label> */}
+        {/*   <input */}
+        {/*     type="number" */}
+        {/*     name="deposit" */}
+        {/*     id="deposit" */}
+        {/*     className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm" */}
+        {/*     value={wedding.deposit} */}
+        {/*     onChange={onWeddingChange} */}
+        {/*     onBlur={handleBlur} */}
+        {/*   /> */}
+        {/*   {renderError('deposit')} */}
+        {/* </div> */}
         <div className="col-span-4 sm:col-span-2">
           <label htmlFor="numOfTables" className="block text-sm font-medium text-gray-700">
             Số lượng bàn

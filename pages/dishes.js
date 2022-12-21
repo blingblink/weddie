@@ -115,6 +115,7 @@ export default function DishesPage(props) {
           onUpdate={onUpdate}
           onDelete={onDelete}
           validationSchema={validationSchema}
+          resource="employee"
         />
       </Layout>
     );

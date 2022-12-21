@@ -111,6 +111,7 @@ export default function WorkingShiftsPage(props) {
         onUpdate={onUpdate}
         onDelete={onDelete}
         validationSchema={validationSchema}
+        resource="working_shift"
       />
     </Layout>
   );

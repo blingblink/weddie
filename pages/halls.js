@@ -138,6 +138,7 @@ export default function HallsPage(props) {
                 onUpdate={onUpdate}
                 onDelete={onDelete}
                 validationSchema={validationSchema}
+                resource="hall"
             />
         </Layout>
     );

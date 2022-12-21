@@ -130,6 +130,15 @@ export default function WeddingCreateOrEditMenu(props) {
     },
   });
 
+  const onDeleteWedding = async () => {
+      await fetch('/api/wedding', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: wedding.id }),
+        });
+      await Router.push('/');
+    }
+
   const BodyComponent = tabs[selectedTabIndex].component;
 
   return (
@@ -204,19 +213,29 @@ export default function WeddingCreateOrEditMenu(props) {
                       errors={formik.errors}
                       handleBlur={formik.handleBlur}
                     />
-                    <div className="mt-6 pt-6 border-t border-gray-200 flex justify-end py-4 px-4">
+                    <div className="mt-6 pt-6 border-t border-gray-200 flex items-center justify-between py-4">
                       <button
                         type="button"
-                        className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        className="inline-flex justify-center rounded-md border border-gray-300 bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                        onClick={async () => await onDeleteWedding()}
                       >
-                        Huỷ
+                        Xoá
                       </button>
-                      <button
-                        type="submit"
-                        className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                      >
-                        {isCreate ? 'Tạo' : 'Cập nhật'}
-                      </button>
+                      <div>
+                        <button
+                          type="button"
+                          className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                          onClick={async () => await Router.push('/')}
+                        >
+                          Huỷ
+                        </button>
+                        <button
+                          type="submit"
+                          className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        >
+                          {isCreate ? 'Tạo' : 'Cập nhật'}
+                        </button>
+                      </div>
                     </div>
                   </form>
                 </section>
