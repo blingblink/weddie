@@ -155,7 +155,7 @@ export default function WeddingInfoPage(props) {
   const isEditable = new Date() < tempDate;
 
   return (
-    <Layout title="Drinkies" description="Selling drinks" className="bg-gray-50">
+    <Layout title={`Tiệc cưới ${wedding.groomName} và ${wedding.brideName}`} description="Thông tin tiệc cưới" className="bg-gray-50">
       <main className="py-10">
         {/* Page header */}
         <div className="mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">

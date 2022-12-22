@@ -103,7 +103,7 @@ export default function WorkingShiftsPage(props) {
   });
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Ca làm việc" description="Các ca làm việc của nhà hàng">
       <ListPage
         pageTitle="Ca làm việc"
         smallPageTableName="Các ca làm việc"

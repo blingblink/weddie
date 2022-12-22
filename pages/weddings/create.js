@@ -11,7 +11,7 @@ export default function WeddingCreatePage(props) {
   } = props;
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Tạo tiệc cưới" description="Tạo tiệc cưới">
       <WeddingCreateOrEditMenu
         workingShifts={workingShifts}
         halls={halls}

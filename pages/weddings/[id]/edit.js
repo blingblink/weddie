@@ -21,7 +21,7 @@ export default function WeddingEditPage(props) {
   if (new Date() >= weddingDate) return;
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Cập nhật tiệc cưới" description="Cập nhật tiệc cưới">
       <WeddingCreateOrEditMenu
         wedding={wedding}
         dishesForWedding={dishesForWedding}

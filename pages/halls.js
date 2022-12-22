@@ -127,7 +127,7 @@ export default function HallsPage(props) {
     });
 
     return (
-        <Layout title="Drinkies" description="Selling drinks">
+        <Layout title="Sảnh" description="Các sảnh của nhà hàng">
             <ListPage
                 pageTitle="Sảnh"
                 smallPageTableName="Các sảnh"

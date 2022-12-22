@@ -95,7 +95,22 @@ export default function PaymentPage(props) {
   const finalPriceAfterDeposit = finalReceipt.price - depositReceipt.price;
   const percentageOfPriceAfterDeposit = ((finalPriceAfterDeposit / finalReceipt.price) * 100).toFixed(3);
   const percentageOfDeposit = ((depositReceipt.price / finalReceipt.price) * 100).toFixed(3);
-  const priceToPay = (receiptToPay && receiptToPay.isDeposit ? receiptToPay.price : finalPriceAfterDeposit);
+  const priceToPayBeforeLateFee = (receiptToPay && receiptToPay.isDeposit ? receiptToPay.price : finalPriceAfterDeposit);
+
+  // Calculate late fee: 1% per day
+  const today = new Date();
+  const weddingDate = new Date(wedding.dateOfWedding);
+  let lateDays = 0;
+  let lateFee = 0;
+  if (weddingDate < today) {
+    lateDays = Math.round((today - weddingDate) / (1000 * 60 * 60 * 24));
+    lateFee = Math.round(lateDays * 0.01 * priceToPayBeforeLateFee);
+  }
+
+  const priceToPay = priceToPayBeforeLateFee + lateFee;
+
+  // Disable payment for finalReceipt if today is before the wedding date
+  const disablePayment = !receiptToPay.isDeposit && new Date() < new Date(wedding.dateOfWedding);
 
   const onSubmit = async e => {
     e.preventDefault();
@@ -106,6 +121,7 @@ export default function PaymentPage(props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         receiptId: receiptToPay.id,
+        price: priceToPay,
         ...paymentDetails,
       }),
     });
@@ -114,7 +130,7 @@ export default function PaymentPage(props) {
   };
 
   return (
-    <Layout title="Drinkies" description="Selling drinks" className="bg-white">
+    <Layout title="Thanh toán hoá đơn" description="Thanh toán hoá đơn tiệcc cưới" className="bg-white">
   		{/* Background color split screen for large screens */}
       <div className="absolute top-0 left-0 hidden h-full w-1/2 bg-white lg:block" aria-hidden="true" />
       <div className="absolute top-0 right-0 hidden h-full w-1/2 bg-gray-50 lg:block" aria-hidden="true" />
@@ -193,6 +209,17 @@ export default function PaymentPage(props) {
                   </>
                 )}
               </div>
+              {lateFee > 0 && (
+                <div className="flex items-center justify-between">
+                  <dt className="text-gray-600">
+                    Phí phạt thanh toán trễ
+                    <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                      1% / ngày - {lateDays} ngày
+                    </span>
+                  </dt>
+                  <dd>{lateFee} VND</dd>
+                </div>
+              )}
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                 <dt className="text-base">{receiptToPay && receiptToPay.isDeposit ? 'Tiền cọc' : 'Tổng tiền'}</dt>
@@ -243,28 +270,39 @@ export default function PaymentPage(props) {
                           </div>
                         ))}
                         <div className="flex items-center justify-between">
-                        {receiptToPay.isDeposit ? (
-                          <>
+                          {receiptToPay.isDeposit ? (
+                            <>
+                              <dt className="text-gray-600">
+                                Chỉ thanh toán tiền cọc
+                                <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                                  -{percentageOfPriceAfterDeposit}%
+                                </span>
+                              </dt>
+                              <dd>-{finalPriceAfterDeposit} VND</dd>
+                            </>
+                          ) : (
+                            <>
+                              <dt className="text-gray-600">
+                                Tiền cọc
+                                <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
+                                  -{percentageOfDeposit}%
+                                </span>
+                              </dt>
+                              <dd>-{depositReceipt.price} VND</dd>
+                            </>
+                          )}
+                        </div>
+                        {lateFee > 0 && (
+                          <div className="flex items-center justify-between">
                             <dt className="text-gray-600">
-                              Chỉ thanh toán tiền cọc
+                              Phí phạt thanh toán trễ
                               <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
-                                -{percentageOfPriceAfterDeposit}%
+                                1% / ngày - {lateDays} ngày
                               </span>
                             </dt>
-                            <dd>-{finalPriceAfterDeposit} VND</dd>
-                          </>
-                        ) : (
-                          <>
-                            <dt className="text-gray-600">
-                              Tiền cọc
-                              <span className="ml-2 rounded-full bg-gray-200 py-0.5 px-2 text-xs tracking-wide text-gray-600">
-                                -{percentageOfDeposit}%
-                              </span>
-                            </dt>
-                            <dd>-{depositReceipt.price} VND</dd>
-                          </>
+                            <dd>{lateFee}</dd>
+                          </div>
                         )}
-                      </div>
                       </dl>
                     </Popover.Panel>
                   </Transition.Child>
@@ -355,10 +393,16 @@ export default function PaymentPage(props) {
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  disabled={disablePayment}
+                  className="w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
                 >
                   Thanh toán {priceToPay} VND
                 </button>
+                {disablePayment && (
+                  <div className="mt-2 max-w-xl text-sm text-red-500">
+                    <p>Không thể thanh toán tổng tiền trước ngày cưới, {wedding.dateOfWedding}</p>
+                  </div>
+                )}
               </div>
             </div>
           </form>

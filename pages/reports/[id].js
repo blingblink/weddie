@@ -29,7 +29,7 @@ export default function ReportIdPage(props) {
   ]
 
   return (
-    <Layout title="Drinkies" description="Selling drinks" className="bg-gray-50">
+    <Layout title={`Báo cáo tháng ${report.month}/${report.year}`} description="Báo cáo doanh thu tháng" className="bg-gray-50">
       <main className="flex-1">
         {/* Page title & actions */}
         <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6">

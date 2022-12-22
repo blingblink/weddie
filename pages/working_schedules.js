@@ -56,7 +56,7 @@ export default function WorkingSchedulesPage(props) {
   ];
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Lịch làm việc" description="Các lịch làm việc của nhân viên">
       <ListPage
         pageTitle="Lịch làm việc của nhân viên"
         smallPageTableName="Lịch làm việc"

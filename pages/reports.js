@@ -100,7 +100,7 @@ export default function ReportsPage(props) {
   });
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Báo cáo tháng" description="Các báo cáo doanh thu tháng của nhà hàng">
       <ListPage
         pageTitle="Báo cáo tháng"
         smallPageTableName="Các báo cáo"

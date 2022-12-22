@@ -104,7 +104,7 @@ export default function ServicesPage(props) {
   });
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Dịch vụ" description="Các dịch vụ của nhà hàng">
       <ListPage
         pageTitle="Dịch vụ"
         smallPageTableName="Các dịch vụ"

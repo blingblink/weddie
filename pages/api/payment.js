@@ -4,6 +4,7 @@ import { removeEmptyFromObj } from '../../components/utils';
 const postHandler = async (req, res) => {
   const {
   	receiptId,
+    // price,
     payerName,
     cardNumber,
     cardExpiry,

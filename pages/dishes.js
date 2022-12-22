@@ -104,7 +104,7 @@ export default function DishesPage(props) {
     });
 
     return (
-      <Layout title="Drinkies" description="Selling drinks">
+      <Layout title="Món ăn" description="Các món ăn của nhà hàng">
         <ListPage
           pageTitle="Món Ăn"
           smallPageTableName="Các Món Ăn"

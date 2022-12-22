@@ -47,7 +47,7 @@ export default function WeddingPage(props) {
   // };
 
   return (
-    <Layout title="Drinkies" description="Selling drinks">
+    <Layout title="Tiệc cưới" description="Các tiệc cưới ở nhà hàng">
       <main className="flex-1">
         <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6">
           <div className="min-w-0 flex-1">
