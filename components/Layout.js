@@ -24,14 +24,14 @@ import { ChevronLeftIcon, EnvelopeIcon, FunnelIcon, MagnifyingGlassIcon, PhoneIc
 import { hasPermission } from '../lib/permissions';
 
 const navigation = [
-  { name: 'Tiệc cưới', href: '/', icon: HomeIcon },
-  { name: 'Sảnh', href: '/halls', icon: MapIcon },
-  { name: 'Dịch vụ', href: '/services', icon: TruckIcon },
-  { name: 'Món ăn', href: '/dishes', icon: ShoppingCartIcon },
-  { name: 'Các ca làm việc', href: '/working_shifts', icon: CalendarIcon },
-  { name: 'Lịch làm việc nhân viên', href: '/working_schedules', icon: CalendarDaysIcon },
-  { name: 'Nhân viên', href: '/employees', icon: UserGroupIcon },
-  { name: 'Báo cáo', href: '/reports', icon: DocumentChartBarIcon },
+  { name: 'Tiệc cưới', href: '/', icon: HomeIcon, resource: 'wedding' },
+  { name: 'Sảnh', href: '/halls', icon: MapIcon, resource: 'hall' },
+  { name: 'Dịch vụ', href: '/services', icon: TruckIcon, resource: 'service' },
+  { name: 'Món ăn', href: '/dishes', icon: ShoppingCartIcon, resource: 'dish' },
+  { name: 'Các ca làm việc', href: '/working_shifts', icon: CalendarIcon, resource: 'working_shift' },
+  { name: 'Lịch làm việc nhân viên', href: '/working_schedules', icon: CalendarDaysIcon, resoure: 'working_schedule' },
+  { name: 'Nhân viên', href: '/employees', icon: UserGroupIcon, resource: 'employee' },
+  { name: 'Báo cáo', href: '/reports', icon: DocumentChartBarIcon, resource: 'report' },
 ]
 
 const secondaryNavigation = [
@@ -48,6 +48,9 @@ const Layout = props => {
   const { data: session, status } = useSession();
   const isSignedIn = !!(session);
   const { user } = session || {};
+
+  const allowedNavigationTabs = navigation.filter(tab => hasPermission({ user, resource: tab.resource }));
+
   const hasAccessToPage = hasPermission({ user });
 
   // TODO: Uncomment this after adding Landing page
@@ -117,7 +120,7 @@ const Layout = props => {
                     {/* </div> */}
                     <nav aria-label="Sidebar" className="mt-5">
                       <div className="space-y-1 px-2">
-                        {navigation.map((item) => (
+                        {allowedNavigationTabs.map((item) => (
                           <a
                             key={item.name}
                             href={item.href}
@@ -218,7 +221,7 @@ const Layout = props => {
                 {/* </div> */}
                 <nav className="mt-5 flex-1" aria-label="Sidebar">
                   <div className="space-y-1 px-2">
-                    {navigation.map((item) => (
+                    {allowedNavigationTabs.map((item) => (
                       <a
                         key={item.name}
                         href={item.href}
