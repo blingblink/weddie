@@ -14,6 +14,12 @@ export default function WeddingEditPage(props) {
   } = props;
   if (!wedding) return;
 
+  const weddingDate = new Date(wedding.dateOfWedding);
+
+  // Only allow edit 14 days before the wedding day.
+  weddingDate.setDate(weddingDate.getDate() - 14);
+  if (new Date() >= weddingDate) return;
+
   return (
     <Layout title="Drinkies" description="Selling drinks">
       <WeddingCreateOrEditMenu

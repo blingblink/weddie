@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import Router from 'next/router';
-import { useFormik } from 'formik';
+import { useFormik, useFormikContext } from 'formik';
 import * as Yup from 'yup';
 import { Dialog, Switch, Transition, RadioGroup, Menu } from '@headlessui/react'
 import {
@@ -212,6 +212,7 @@ export default function WeddingCreateOrEditMenu(props) {
                       touched={formik.touched}
                       errors={formik.errors}
                       handleBlur={formik.handleBlur}
+                      setFieldValue={formik.setFieldValue}
                     />
                     <div className="mt-6 pt-6 border-t border-gray-200 flex items-center justify-between py-4">
                       <button

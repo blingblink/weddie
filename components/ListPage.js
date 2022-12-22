@@ -140,6 +140,12 @@ export default function ListPage(props) {
     setRowValue({});
   }
 
+  const renderPrimaryCell = (val, column) => {
+    if (column.displayConverter)
+      return column.displayConverter(val);
+    return val;
+  }
+
   const renderCell = (val, column) => {
     let renderedValue = val;
     if (val === null || val === undefined || val === '') renderedValue = '-';
@@ -253,9 +259,9 @@ export default function ListPage(props) {
                   <td className="w-full max-w-0 whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                     {columns[0].href ? (
                       <a href={columns[0].href(row)} className="truncate hover:text-gray-600">
-                        {row[columns[0].key]}
+                        {renderPrimaryCell(row[columns[0].key], columns[0])}
                       </a>
-                    ) : row[columns[0].key]}
+                    ) : renderPrimaryCell(row[columns[0].key], columns[0])}
                   </td>
                   {columns.filter((col, idx) => idx > 0).map((col) => (
                     <td

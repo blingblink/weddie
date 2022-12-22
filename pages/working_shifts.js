@@ -13,6 +13,8 @@ import Layout from '../components/Layout';
 import ListPage from '../components/ListPage';
 import prisma from '../lib/prisma'
 
+const daysOfWeek = ["Chủ nhật", "Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"];
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -67,6 +69,7 @@ export default function WorkingShiftsPage(props) {
       label: 'Ngày trong tuần',
       type: 'number',
       default: '',
+      displayConverter: (weekdayInt) => daysOfWeek[weekdayInt],
     },
     {
       key: 'startHour',

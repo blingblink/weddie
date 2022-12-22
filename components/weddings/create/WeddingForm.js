@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -12,13 +12,32 @@ export default function WeddingForm(props) {
     errors,
     touched,
     handleBlur,
+    setFieldValue,
   } = props;
 
-  const objDateOfWedding = new Date(wedding.dateOfWedding);
-  const weekdayOfWedding = objDateOfWedding ? objDateOfWedding.getDay() : null;
-  const availableWorkingShifts = weekdayOfWedding === null ? [] : workingShifts.filter(
-    shift => shift.weekday === weekdayOfWedding
-  );
+  const [availableWorkingShifts, setAvailableWorkingShifts] = useState([]);
+  const [availableHalls, setAvailableHalls] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      let timestamp = Date.parse(wedding.dateOfWedding);
+      if (isNaN(timestamp) === true) return;
+
+      const response = await fetch('/api/wedding/availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateOfWedding: wedding.dateOfWedding,
+        }),
+      });
+      const responseJson = await response.json();
+      setAvailableWorkingShifts(workingShifts.filter(shift => shift.id in responseJson));
+
+      if (wedding.workingShiftId) {
+        setAvailableHalls(responseJson[wedding.workingShiftId] || []);
+      }
+    })();
+  }, [wedding.workingShiftId, wedding.dateOfWedding, workingShifts]);
 
   const renderError = (field) => (
     <>
@@ -136,11 +155,11 @@ export default function WeddingForm(props) {
             id="hallId"
             name="hallId"
             className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900 sm:text-sm"
-            disabled={halls.length < 1}
+            disabled={availableHalls.length < 1}
             onChange={evt => evt.target.value && onWeddingChange(evt)}
           >
             {wedding.hallId === null && (<option></option>)}
-            {halls.map(hall => (
+            {availableHalls.map(hall => (
               <option
                 key={`hall-option-${hall.id}`}
                 value={hall.id}
